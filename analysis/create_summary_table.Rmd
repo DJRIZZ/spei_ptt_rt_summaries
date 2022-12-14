@@ -1,0 +1,160 @@
+---
+title: "create_summary_table"
+author: 
+date: "`r Sys.Date()`"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Tranmitter Summary
+
+* id_ptt = transmitter ID (IDs beginning 197 are adults, 229 are juveniles)
+* date_recent = timestamp on the most recent message from the transmitter
+* recent_temp = temperature of the transmitter from the most recent message in degrees Celsius
+* mean_temp = average temperature of transmitter from the 5 most recent messages in degrees Celsius
+* volts_mean = average transmitter battery voltage over 5 most recent messages
+* status: 
+  + active = transmitter is warm and providing locations at or near the expected frequency
+  + ambiguous = transmitter was last detected warm, but is no longer providing locations
+  + messages_only = transmitter is warm and providing messages, but without sufficient data to determine its location
+  + cold = transmitter detected cold, indicating a mortality
+        
+
+```{r load packages, message = FALSE}
+# got packages?
+library(workflowr)# git version tracking to repository
+library(move) # functions to access data from Movebank
+library(knitr)
+```
+
+```{r create table, warning = FALSE, message = FALSE}
+# set current date
+today <- Sys.Date()
+
+# source Movebank login info to protect password
+source("code/login_movebank_rizzolo.R")
+
+# get Movebank project info
+FwsName <- "Spectacled_Eider_USFWS_Alaska"
+studyIdFws <- getMovebankID(FwsName, login=Login)
+
+# download location data
+locs_fws <- getMovebankLocationData(study=FwsName, sensorID="Argos Doppler Shift", login=Login, includeOutliers=TRUE)
+# warning messages from old residual reference data that Movebank is not deleting with each new ref data upload, for some reason
+# does not effect the current data
+
+### download reference data into a data frame....
+ref_fws <- getMovebankReferenceTable(study=FwsName,login=Login)
+
+# retain unchanged dataframe
+#arch_locs <- locs_fws
+locs <- locs_fws
+
+# format date and subset transmitters with timestamp year > 2021
+locs$timestamp <- as.POSIXct(locs$timestamp, format="%Y-%m-%d %H:%M:%S", tz = 'UTC')
+thisyear <- subset(locs, format(locs$timestamp, format("%Y")) > 2021)
+
+# select most recent record for each transmitter ID
+recent<-thisyear[
+  tapply(1:nrow(thisyear), thisyear$tag.local.identifier, function(ii) ii[which.max(thisyear$timestamp[ii])])
+  ,]
+
+# 1. Get date and sensor 1 (ptt temp) data from most the recent location for each transmitter ID ####
+# create dateframe with most recent date for each transmitter ID
+date_recent <- cbind.data.frame(id_ptt = recent$tag.local.identifier, date_recent = recent$timestamp)
+
+# number of days since last location
+date_recent$days_since_last_loc <- as.numeric(today-as.Date(date_recent$date_recent))
+date_recent$days_since_last_loc <- ifelse(date_recent$days_since_last_loc < 1, 0, date_recent$days_since_last_loc)
+
+# number of missed duty cycles, where adult PTTs (IDs 197###) is every 7 d, and juveniles (221###) is every 2 d
+date_recent$missed_cycles <- ifelse(date_recent$id_ptt < 229000, date_recent$days_since_last_loc/7, date_recent$days_since_last_loc/2)
+date_recent$missed_cycles <- round(date_recent$missed_cycles,1)
+date_recent$missed_cycles <- ifelse(date_recent$missed_cycles < 1, 0, date_recent$missed_cycles)
+
+# create object with most recent sensor1 data from each PTT
+recent_temp <- cbind.data.frame(id_ptt = recent$tag.local.identifier, recent_temp = recent$argos.sensor.1)
+
+# transform sensor1 data to deg C
+recent_temp$recent_temp <- -28.68 + 0.3609*recent$argos.sensor.1
+
+# 2. Get mean transmitter temperature and voltage from 5 most recent records for each transmitter ID ####
+# remove records with argos.sensor.1 data not related to temperature by first...
+# removing NA data for transmitter sensor 1 (temperature) indicated with -999
+locs_temp <- subset(thisyear,  argos.sensor.1 != -999) # and then,
+
+# removing special transmission data (every 4th duty cycle) indicated by  argos.sensor.3 = 0 (see MTI Battery Powered PTT-100 Field Manual, p 17)
+locs_temp <- subset(locs_temp,  argos.sensor.3 != 0)
+
+# Get most recent data for each transmitter by
+# sub-setting 5 most recent records by timestamp for each ID
+# first, order by timestamp for each ID
+locs_temp <- locs_temp[order(locs_temp$timestamp, decreasing = TRUE), ]
+
+# then, subset to 5 most recent records per ID
+five <- Reduce(rbind, by(locs_temp,
+                       locs_temp["tag.local.identifier"],
+                       head,
+                       n = 5))
+
+# calculate mean transmitter values over 5 most recent obs by transmitter
+mean_temp <- aggregate(argos.sensor.1 ~ five$tag.local.identifier, data = five, FUN="mean")
+
+# convert sensor.1 values to deg C (from Microwave Telem field manual)
+mean_temp$mean_temp <- -28.68 + 0.3609*mean_temp$argos.sensor.1
+
+colnames(mean_temp) <- c("id_ptt", "sensor1", "mean_temp")
+mean_temp <- mean_temp[, -2] # remove unneeded untransformed value column
+
+# get body temp ready from the most recently received PTT message
+
+# calculate mean transmitter voltage over 5 most recent obs by transmitter
+volts_mean <- aggregate(argos.sensor.2 ~ five$tag.local.identifier, data = five, FUN="mean")
+
+# convert sensor 2 values to volts  (from Microwave Telem field manual)
+volts_mean$volts_mean <- 2.978 + 0.0041*volts_mean$argos.sensor.2
+
+colnames(volts_mean) <- c("id_ptt", "sensor2", "volts_mean")
+volts_mean <- volts_mean[, -2] # remove unneeded untransformed value column
+
+# merge recent date and temperature by transmitter ID
+ptt_sum <- merge(date_recent[, -3], recent_temp, by = "id_ptt")
+ptt_sum <- merge(ptt_sum, mean_temp, by = "id_ptt")
+ptt_sum <- merge(ptt_sum, volts_mean, by ="id_ptt")
+
+# create dataframe of transmitter fates
+id_ptt_ad <- seq(197559, 197598,1)
+id_ptt_juv <- c("229950","229951","229952", "229953","229954","229955","229957","229958","229961","229963","229964","229965")
+id_ptt_juv <- as.numeric(id_ptt_juv)
+id_ptt <- c(id_ptt_ad, id_ptt_juv)
+
+# from tbl_fates in database spei_ptt_2018_2022.accdb
+status <- c("active", "active", "active", "active", "cold", "active", "ambiguous", "messages_only", "active", "ambiguous",
+           "active", "active","active","active","active","active","active", "messages_only", "active", "ambiguous", "active", "active",
+           "cold", "active", "active", "cold", "active","active", "cold", "cold", "ambiguous", "active", "active", "ambiguous", "active",
+           "active", "active", "active", "messages_only", "messages_only", "ambiguous", "ambiguous", "cold", "active", "cold",
+           "active", "cold", "active", "active", "cold", "active", "cold")
+
+fates_df <- data.frame(id_ptt, status)
+
+ptt_sum <- merge(ptt_sum, fates_df, by = "id_ptt")
+
+# sort
+ptt_sum <- ptt_sum[order(ptt_sum$date_recent, decreasing = TRUE), ]
+
+# how many PTTs in table (should be 52 that were deployed in 2022)
+ptt_count <- nrow(ptt_sum)
+
+#print(ptt_sum)
+# missing PTTs (should be n = 52):
+# 197563: Dead. First cold on 06 June 2022. Last warm on 18 May 2022.
+# 197566: transmitter message with no location (too few messages) on 02 Nov 2022, at which time PTT was warm. Last message with location was 12 June 2022.
+#         Poor transmitter performance.
+
+kable(ptt_sum[ ,-3], row.names = FALSE)
+```
+
+```{r status summary, message = FALSE}
+table(fates_df$status)
+```
