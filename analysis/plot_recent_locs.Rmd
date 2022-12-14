@@ -1,0 +1,101 @@
+---
+title: "Map"
+author: 
+date: "`r Sys.Date()`"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+# got packages?
+library(leaflet) # interactive map
+library(tidyverse) # whatever
+library(move)   # must be move version 3.3.0+; to access Movebank data
+library(htmltools) # apply html syntax used in leaflet map
+
+# set current date
+today<-Sys.Date()
+```
+
+Locations were downloaded from the Movebank.org data repository on `r today`.
+```{r login download data, warning = FALSE}
+# load most recent data from Movebank
+#Login<-movebankLogin(username = username, password = password) 
+# use sourced script to login
+source("code/login_movebank_rizzolo.R", local = knitr::knit_global())
+
+# get Movebank project info
+FwsName <- "Spectacled_Eider_USFWS_Alaska"
+studyIdFws <- getMovebankID(FwsName, login=Login)
+
+### Read the Movebank location data into a data frame
+locs_fws <- getMovebankLocationData(study=FwsName, sensorID="Argos Doppler Shift", login=Login, includeOutliers=TRUE)
+# warning messages from old residual reference data that Movebank is not deleting with each new ref data upload, for some reason
+# does not effect the current data
+
+### Read the associated Movebank reference data into a data frame.
+ref_fws <- getMovebankReferenceTable(study=FwsName,login=Login)
+
+```
+
+Data were filtered using the Douglas Argos Filter to remove improbable locations based on movement rate and direction. Two weeks of data prior to the date the data were downloaded are shown.
+```{r data filtering}
+# remove locations marked as outliers based on movement rates and directions using Douglas Argos Filter, which is run in Movebank
+#table(locs_fws$algorithm.marked.outlier)
+locs_all <- locs_fws
+locs_filter <- subset(locs_fws, algorithm.marked.outlier != "true")
+
+# combine locations and reference data
+alldata <- dplyr::left_join(locs_filter, ref_fws,
+                                 by=c("deployment.id" = "deployment_id", "sensor.type.id" = "sensor_type_id"))
+
+# select locations from most recent 2 weeks
+recent <- subset(alldata, timestamp > today-14)
+
+# define range of data and sample size for locations and transmitters
+min_date <- min(recent$timestamp)
+max_date <- max(recent$timestamp)
+ptts <- unique(recent$tag_local_identifier)
+ptt_count <- length(ptts)
+location_count <-length(recent) 
+
+# convert sensor 1 PTT temp from untransformed value to degrees F (PTT temps will be displayed in map)
+recent$tempC <- round(-28.682 + 0.3609 * recent$argos.sensor.1, 1)
+#recent$tempF <- (tempC * 1.8) + 32
+
+```
+
+The oldest transmitter location timestamp in this map is `r min_date`.
+
+The most recent transmitter location timestamp in this map is `r max_date`.
+
+`r location_count` locations from `r ptt_count` transmitters are shown in this plot.
+
+
+Hover the cursor over a point to show information related to that location. 
+
+Current data on sea ice concentration from the University of Bremen are available [here](https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png).
+
+```{r leaflet map}
+# map 'em
+m <- leaflet() %>%
+  setView(lng = -170, lat = 63.5, zoom = 6) %>%
+  addProviderTiles("Esri.OceanBasemap", group = "Ocean Basemap") %>%
+  addCircles(data = recent,
+             ~ location.long,
+             ~ location.lat,
+             color = "red",
+             label = paste("ID:", recent$individual.local.identifier, "<br>",
+                           "Loc Date:", recent$timestamp, "<br>",
+                           "Deploy Site:", recent$study_site, "<br>",
+                           "Sex:", ifelse(recent$animal_sex == "f", "Female", "Male"), "<br>",
+                           "Age:", ifelse(recent$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
+                           "PTT temp (alive is ~ 40 C):", ifelse(recent$argos.sensor.3 != 0, recent$tempC, "NA")) %>% 
+               lapply(htmltools::HTML)
+             )
+
+m
+
+```
+
