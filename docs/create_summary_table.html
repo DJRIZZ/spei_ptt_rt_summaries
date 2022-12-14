@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+<meta name="date" content="2022-12-14" />
+
+<title>create_summary_table</title>
+
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SPEI PTT Data Summaries</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="plot_recent_locs.html">Map</a>
+</li>
+<li>
+  <a href="create_summary_table.html">Transmitter Status</a>
+</li>
+<li>
+  <a href="plot_ptt_temp_all.html">Transmitter Temperature</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">create_summary_table</h1>
+<h4 class="author"></h4>
+<h4 class="date">2022-12-14</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-12-14
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>spei_ptt_rt_summaries/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221121code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20221121)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221121code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221121)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong9a8e826">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> 9a8e826
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrong9a8e826"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version 9a8e826.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   _workflowr.yml
+    Modified:   analysis/_site.yml
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/create_summary_table.Rmd</code>)
+and HTML (<code>docs/create_summary_table.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+9a8e826
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2022-12-14
+</td>
+<td>
+update 14 Dec 2022, add status summary, corrected juv IDs
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="tranmitter-summary" class="section level2">
+<h2>Tranmitter Summary</h2>
+<ul>
+<li>id_ptt = transmitter ID (IDs beginning 197 are adults, 229 are
+juveniles)</li>
+<li>date_recent = timestamp on the most recent message from the
+transmitter</li>
+<li>recent_temp = temperature of the transmitter from the most recent
+message in degrees Celsius</li>
+<li>mean_temp = average temperature of transmitter from the 5 most
+recent messages in degrees Celsius</li>
+<li>volts_mean = average transmitter battery voltage over 5 most recent
+messages</li>
+<li>status:
+<ul>
+<li>active = transmitter is warm and providing locations at or near the
+expected frequency</li>
+<li>ambiguous = transmitter was last detected warm, but is no longer
+providing locations</li>
+<li>messages_only = transmitter is warm and providing messages, but
+without sufficient data to determine its location</li>
+<li>cold = transmitter detected cold, indicating a mortality</li>
+</ul></li>
+</ul>
+<pre class="r"><code># got packages?
+library(workflowr)# git version tracking to repository
+library(move) # functions to access data from Movebank
+library(knitr)</code></pre>
+<pre class="r"><code># set current date
+today &lt;- Sys.Date()
+
+# source Movebank login info to protect password
+source(&quot;code/login_movebank_rizzolo.R&quot;)
+
+# get Movebank project info
+FwsName &lt;- &quot;Spectacled_Eider_USFWS_Alaska&quot;
+studyIdFws &lt;- getMovebankID(FwsName, login=Login)
+
+# download location data
+locs_fws &lt;- getMovebankLocationData(study=FwsName, sensorID=&quot;Argos Doppler Shift&quot;, login=Login, includeOutliers=TRUE)
+# warning messages from old residual reference data that Movebank is not deleting with each new ref data upload, for some reason
+# does not effect the current data
+
+### download reference data into a data frame....
+ref_fws &lt;- getMovebankReferenceTable(study=FwsName,login=Login)
+
+# retain unchanged dataframe
+#arch_locs &lt;- locs_fws
+locs &lt;- locs_fws
+
+# format date and subset transmitters with timestamp year &gt; 2021
+locs$timestamp &lt;- as.POSIXct(locs$timestamp, format=&quot;%Y-%m-%d %H:%M:%S&quot;, tz = &#39;UTC&#39;)
+thisyear &lt;- subset(locs, format(locs$timestamp, format(&quot;%Y&quot;)) &gt; 2021)
+
+# select most recent record for each transmitter ID
+recent&lt;-thisyear[
+  tapply(1:nrow(thisyear), thisyear$tag.local.identifier, function(ii) ii[which.max(thisyear$timestamp[ii])])
+  ,]
+
+# 1. Get date and sensor 1 (ptt temp) data from most the recent location for each transmitter ID ####
+# create dateframe with most recent date for each transmitter ID
+date_recent &lt;- cbind.data.frame(id_ptt = recent$tag.local.identifier, date_recent = recent$timestamp)
+
+# number of days since last location
+date_recent$days_since_last_loc &lt;- as.numeric(today-as.Date(date_recent$date_recent))
+date_recent$days_since_last_loc &lt;- ifelse(date_recent$days_since_last_loc &lt; 1, 0, date_recent$days_since_last_loc)
+
+# number of missed duty cycles, where adult PTTs (IDs 197###) is every 7 d, and juveniles (221###) is every 2 d
+date_recent$missed_cycles &lt;- ifelse(date_recent$id_ptt &lt; 229000, date_recent$days_since_last_loc/7, date_recent$days_since_last_loc/2)
+date_recent$missed_cycles &lt;- round(date_recent$missed_cycles,1)
+date_recent$missed_cycles &lt;- ifelse(date_recent$missed_cycles &lt; 1, 0, date_recent$missed_cycles)
+
+# create object with most recent sensor1 data from each PTT
+recent_temp &lt;- cbind.data.frame(id_ptt = recent$tag.local.identifier, recent_temp = recent$argos.sensor.1)
+
+# transform sensor1 data to deg C
+recent_temp$recent_temp &lt;- -28.68 + 0.3609*recent$argos.sensor.1
+
+# 2. Get mean transmitter temperature and voltage from 5 most recent records for each transmitter ID ####
+# remove records with argos.sensor.1 data not related to temperature by first...
+# removing NA data for transmitter sensor 1 (temperature) indicated with -999
+locs_temp &lt;- subset(thisyear,  argos.sensor.1 != -999) # and then,
+
+# removing special transmission data (every 4th duty cycle) indicated by  argos.sensor.3 = 0 (see MTI Battery Powered PTT-100 Field Manual, p 17)
+locs_temp &lt;- subset(locs_temp,  argos.sensor.3 != 0)
+
+# Get most recent data for each transmitter by
+# sub-setting 5 most recent records by timestamp for each ID
+# first, order by timestamp for each ID
+locs_temp &lt;- locs_temp[order(locs_temp$timestamp, decreasing = TRUE), ]
+
+# then, subset to 5 most recent records per ID
+five &lt;- Reduce(rbind, by(locs_temp,
+                       locs_temp[&quot;tag.local.identifier&quot;],
+                       head,
+                       n = 5))
+
+# calculate mean transmitter values over 5 most recent obs by transmitter
+mean_temp &lt;- aggregate(argos.sensor.1 ~ five$tag.local.identifier, data = five, FUN=&quot;mean&quot;)
+
+# convert sensor.1 values to deg C (from Microwave Telem field manual)
+mean_temp$mean_temp &lt;- -28.68 + 0.3609*mean_temp$argos.sensor.1
+
+colnames(mean_temp) &lt;- c(&quot;id_ptt&quot;, &quot;sensor1&quot;, &quot;mean_temp&quot;)
+mean_temp &lt;- mean_temp[, -2] # remove unneeded untransformed value column
+
+# get body temp ready from the most recently received PTT message
+
+# calculate mean transmitter voltage over 5 most recent obs by transmitter
+volts_mean &lt;- aggregate(argos.sensor.2 ~ five$tag.local.identifier, data = five, FUN=&quot;mean&quot;)
+
+# convert sensor 2 values to volts  (from Microwave Telem field manual)
+volts_mean$volts_mean &lt;- 2.978 + 0.0041*volts_mean$argos.sensor.2
+
+colnames(volts_mean) &lt;- c(&quot;id_ptt&quot;, &quot;sensor2&quot;, &quot;volts_mean&quot;)
+volts_mean &lt;- volts_mean[, -2] # remove unneeded untransformed value column
+
+# merge recent date and temperature by transmitter ID
+ptt_sum &lt;- merge(date_recent[, -3], recent_temp, by = &quot;id_ptt&quot;)
+ptt_sum &lt;- merge(ptt_sum, mean_temp, by = &quot;id_ptt&quot;)
+ptt_sum &lt;- merge(ptt_sum, volts_mean, by =&quot;id_ptt&quot;)
+
+# create dataframe of transmitter fates
+id_ptt_ad &lt;- seq(197559, 197598,1)
+id_ptt_juv &lt;- c(&quot;229950&quot;,&quot;229951&quot;,&quot;229952&quot;, &quot;229953&quot;,&quot;229954&quot;,&quot;229955&quot;,&quot;229957&quot;,&quot;229958&quot;,&quot;229961&quot;,&quot;229963&quot;,&quot;229964&quot;,&quot;229965&quot;)
+id_ptt_juv &lt;- as.numeric(id_ptt_juv)
+id_ptt &lt;- c(id_ptt_ad, id_ptt_juv)
+
+# from tbl_fates in database spei_ptt_2018_2022.accdb
+status &lt;- c(&quot;active&quot;, &quot;active&quot;, &quot;active&quot;, &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;ambiguous&quot;, &quot;messages_only&quot;, &quot;active&quot;, &quot;ambiguous&quot;,
+           &quot;active&quot;, &quot;active&quot;,&quot;active&quot;,&quot;active&quot;,&quot;active&quot;,&quot;active&quot;,&quot;active&quot;, &quot;messages_only&quot;, &quot;active&quot;, &quot;ambiguous&quot;, &quot;active&quot;, &quot;active&quot;,
+           &quot;cold&quot;, &quot;active&quot;, &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;,&quot;active&quot;, &quot;cold&quot;, &quot;cold&quot;, &quot;ambiguous&quot;, &quot;active&quot;, &quot;active&quot;, &quot;ambiguous&quot;, &quot;active&quot;,
+           &quot;active&quot;, &quot;active&quot;, &quot;active&quot;, &quot;messages_only&quot;, &quot;messages_only&quot;, &quot;ambiguous&quot;, &quot;ambiguous&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;cold&quot;,
+           &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;cold&quot;)
+
+fates_df &lt;- data.frame(id_ptt, status)
+
+ptt_sum &lt;- merge(ptt_sum, fates_df, by = &quot;id_ptt&quot;)
+
+# sort
+ptt_sum &lt;- ptt_sum[order(ptt_sum$date_recent, decreasing = TRUE), ]
+
+# how many PTTs in table (should be 52 that were deployed in 2022)
+ptt_count &lt;- nrow(ptt_sum)
+
+#print(ptt_sum)
+# missing PTTs (should be n = 52):
+# 197563: Dead. First cold on 06 June 2022. Last warm on 18 May 2022.
+# 197566: transmitter message with no location (too few messages) on 02 Nov 2022, at which time PTT was warm. Last message with location was 12 June 2022.
+#         Poor transmitter performance.
+
+kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="9%" />
+<col width="27%" />
+<col width="16%" />
+<col width="13%" />
+<col width="14%" />
+<col width="18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">id_ptt</th>
+<th align="left">date_recent</th>
+<th align="right">recent_temp</th>
+<th align="right">mean_temp</th>
+<th align="right">volts_mean</th>
+<th align="left">status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">197561</td>
+<td align="left">2022-12-14 16:05:04</td>
+<td align="right">-27.2364</td>
+<td align="right">40.68498</td>
+<td align="right">3.81112</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197559</td>
+<td align="left">2022-12-14 15:59:45</td>
+<td align="right">-27.5973</td>
+<td align="right">40.32408</td>
+<td align="right">3.81440</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197560</td>
+<td align="left">2022-12-14 15:59:18</td>
+<td align="right">40.6128</td>
+<td align="right">40.68498</td>
+<td align="right">3.80456</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197591</td>
+<td align="left">2022-12-14 10:29:05</td>
+<td align="right">40.6128</td>
+<td align="right">40.32408</td>
+<td align="right">3.84064</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">229958</td>
+<td align="left">2022-12-14 09:19:36</td>
+<td align="right">39.8910</td>
+<td align="right">30.21888</td>
+<td align="right">3.74634</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197595</td>
+<td align="left">2022-12-14 05:59:41</td>
+<td align="right">40.2519</td>
+<td align="right">40.39626</td>
+<td align="right">3.81112</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197578</td>
+<td align="left">2022-12-14 05:59:10</td>
+<td align="right">40.6128</td>
+<td align="right">40.90152</td>
+<td align="right">3.82424</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="even">
+<td align="right">197582</td>
+<td align="left">2022-12-14 05:24:49</td>
+<td align="right">39.8910</td>
+<td align="right">40.39626</td>
+<td align="right">3.81440</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197598</td>
+<td align="left">2022-12-14 00:25:36</td>
+<td align="right">39.8910</td>
+<td align="right">39.96318</td>
+<td align="right">3.83080</td>
+<td align="left">messages_only</td>
+</tr>
+<tr class="even">
+<td align="right">197575</td>
+<td align="left">2022-12-13 21:10:08</td>
+<td align="right">40.6128</td>
+<td align="right">40.82934</td>
+<td align="right">3.83408</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">229955</td>
+<td align="left">2022-12-13 20:05:52</td>
+<td align="right">40.9737</td>
+<td align="right">31.66248</td>
+<td align="right">3.74552</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197574</td>
+<td align="left">2022-12-13 18:47:08</td>
+<td align="right">-27.2364</td>
+<td align="right">40.10754</td>
+<td align="right">3.82916</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197567</td>
+<td align="left">2022-12-13 15:57:31</td>
+<td align="right">39.8910</td>
+<td align="right">40.03536</td>
+<td align="right">3.82752</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197562</td>
+<td align="left">2022-12-13 07:51:11</td>
+<td align="right">40.2519</td>
+<td align="right">44.65488</td>
+<td align="right">3.81440</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197565</td>
+<td align="left">2022-12-13 06:45:18</td>
+<td align="right">40.6128</td>
+<td align="right">39.45792</td>
+<td align="right">3.82096</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="even">
+<td align="right">197577</td>
+<td align="left">2022-12-13 05:07:15</td>
+<td align="right">39.8910</td>
+<td align="right">40.10754</td>
+<td align="right">3.83080</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197579</td>
+<td align="left">2022-12-13 05:04:33</td>
+<td align="right">39.5301</td>
+<td align="right">37.29252</td>
+<td align="right">3.81768</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197570</td>
+<td align="left">2022-12-13 05:01:51</td>
+<td align="right">-26.5146</td>
+<td align="right">40.39626</td>
+<td align="right">3.80784</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197576</td>
+<td align="left">2022-12-13 04:55:19</td>
+<td align="right">40.6128</td>
+<td align="right">40.17972</td>
+<td align="right">3.81440</td>
+<td align="left">messages_only</td>
+</tr>
+<tr class="even">
+<td align="right">197596</td>
+<td align="left">2022-12-13 04:36:58</td>
+<td align="right">43.5000</td>
+<td align="right">41.04588</td>
+<td align="right">3.78816</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197590</td>
+<td align="left">2022-12-13 03:32:19</td>
+<td align="right">40.2519</td>
+<td align="right">40.25190</td>
+<td align="right">3.84228</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197568</td>
+<td align="left">2022-12-13 01:20:38</td>
+<td align="right">40.9737</td>
+<td align="right">42.92256</td>
+<td align="right">3.79882</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="odd">
+<td align="right">197569</td>
+<td align="left">2022-12-12 23:59:38</td>
+<td align="right">39.8910</td>
+<td align="right">39.89100</td>
+<td align="right">3.79964</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197580</td>
+<td align="left">2022-12-12 23:06:39</td>
+<td align="right">40.2519</td>
+<td align="right">39.96318</td>
+<td align="right">3.79800</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197564</td>
+<td align="left">2022-12-12 21:26:11</td>
+<td align="right">-27.2364</td>
+<td align="right">39.81882</td>
+<td align="right">3.84720</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197593</td>
+<td align="left">2022-12-12 19:03:32</td>
+<td align="right">39.5301</td>
+<td align="right">38.88048</td>
+<td align="right">3.68648</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197573</td>
+<td align="left">2022-12-12 15:22:42</td>
+<td align="right">40.6128</td>
+<td align="right">40.68498</td>
+<td align="right">3.78816</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197585</td>
+<td align="left">2022-12-12 09:47:15</td>
+<td align="right">40.2519</td>
+<td align="right">40.25190</td>
+<td align="right">3.85376</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">229964</td>
+<td align="left">2022-12-12 07:49:01</td>
+<td align="right">40.9737</td>
+<td align="right">41.04588</td>
+<td align="right">3.81440</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">229961</td>
+<td align="left">2022-12-12 05:24:31</td>
+<td align="right">40.2519</td>
+<td align="right">40.61280</td>
+<td align="right">3.79472</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197597</td>
+<td align="left">2022-12-12 01:10:55</td>
+<td align="right">40.6128</td>
+<td align="right">40.17972</td>
+<td align="right">3.85704</td>
+<td align="left">messages_only</td>
+</tr>
+<tr class="even">
+<td align="right">197586</td>
+<td align="left">2022-12-11 22:01:04</td>
+<td align="right">-27.9582</td>
+<td align="right">40.39626</td>
+<td align="right">3.84064</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197572</td>
+<td align="left">2022-12-11 08:10:04</td>
+<td align="right">40.6128</td>
+<td align="right">39.81882</td>
+<td align="right">3.81440</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197566</td>
+<td align="left">2022-12-10 05:55:23</td>
+<td align="right">40.2519</td>
+<td align="right">40.32408</td>
+<td align="right">3.73732</td>
+<td align="left">messages_only</td>
+</tr>
+<tr class="odd">
+<td align="right">197589</td>
+<td align="left">2022-12-08 23:44:26</td>
+<td align="right">39.8910</td>
+<td align="right">26.53770</td>
+<td align="right">3.77504</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="even">
+<td align="right">197594</td>
+<td align="left">2022-12-08 19:45:24</td>
+<td align="right">39.8910</td>
+<td align="right">39.24138</td>
+<td align="right">3.83736</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">229953</td>
+<td align="left">2022-12-05 22:17:28</td>
+<td align="right">3.0792</td>
+<td align="right">32.88954</td>
+<td align="right">3.81440</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197583</td>
+<td align="left">2022-12-03 01:31:07</td>
+<td align="right">-27.9582</td>
+<td align="right">40.39626</td>
+<td align="right">3.88410</td>
+<td align="left">active</td>
+</tr>
+<tr class="odd">
+<td align="right">197571</td>
+<td align="left">2022-11-28 17:05:27</td>
+<td align="right">39.8910</td>
+<td align="right">37.86996</td>
+<td align="right">3.67008</td>
+<td align="left">active</td>
+</tr>
+<tr class="even">
+<td align="right">197592</td>
+<td align="left">2022-11-07 08:42:12</td>
+<td align="right">39.8910</td>
+<td align="right">44.51052</td>
+<td align="right">3.57168</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="odd">
+<td align="right">229952</td>
+<td align="left">2022-10-21 05:53:44</td>
+<td align="right">40.2519</td>
+<td align="right">40.54062</td>
+<td align="right">3.81440</td>
+<td align="left">cold</td>
+</tr>
+<tr class="even">
+<td align="right">229957</td>
+<td align="left">2022-09-15 21:14:06</td>
+<td align="right">39.8910</td>
+<td align="right">40.17972</td>
+<td align="right">3.82752</td>
+<td align="left">cold</td>
+</tr>
+<tr class="odd">
+<td align="right">229951</td>
+<td align="left">2022-09-12 07:59:57</td>
+<td align="right">-27.2364</td>
+<td align="right">40.25190</td>
+<td align="right">3.82752</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="even">
+<td align="right">229954</td>
+<td align="left">2022-08-30 20:57:55</td>
+<td align="right">40.9737</td>
+<td align="right">40.68498</td>
+<td align="right">3.84064</td>
+<td align="left">cold</td>
+</tr>
+<tr class="odd">
+<td align="right">229963</td>
+<td align="left">2022-08-27 06:20:11</td>
+<td align="right">40.9737</td>
+<td align="right">40.90152</td>
+<td align="right">3.81768</td>
+<td align="left">cold</td>
+</tr>
+<tr class="even">
+<td align="right">229965</td>
+<td align="left">2022-08-26 20:24:00</td>
+<td align="right">40.9737</td>
+<td align="right">40.68498</td>
+<td align="right">3.84720</td>
+<td align="left">cold</td>
+</tr>
+<tr class="odd">
+<td align="right">197588</td>
+<td align="left">2022-08-26 02:25:25</td>
+<td align="right">-27.9582</td>
+<td align="right">40.61280</td>
+<td align="right">3.88000</td>
+<td align="left">cold</td>
+</tr>
+<tr class="even">
+<td align="right">197587</td>
+<td align="left">2022-08-16 06:56:55</td>
+<td align="right">40.6128</td>
+<td align="right">40.61280</td>
+<td align="right">3.86360</td>
+<td align="left">cold</td>
+</tr>
+<tr class="odd">
+<td align="right">229950</td>
+<td align="left">2022-08-12 03:19:17</td>
+<td align="right">42.0564</td>
+<td align="right">41.33460</td>
+<td align="right">3.81440</td>
+<td align="left">ambiguous</td>
+</tr>
+<tr class="even">
+<td align="right">197584</td>
+<td align="left">2022-07-30 04:47:36</td>
+<td align="right">-27.9582</td>
+<td align="right">40.79325</td>
+<td align="right">3.88000</td>
+<td align="left">cold</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>table(fates_df$status)</code></pre>
+<pre><code>
+       active     ambiguous          cold messages_only 
+           31             7            10             4 </code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.2.2 (2022-10-31 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.40       move_4.1.10      rgdal_1.5-32     raster_3.6-3    
+[5] sp_1.5-0         geosphere_1.5-14 workflowr_1.7.0 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.9       highr_0.9        compiler_4.2.2   pillar_1.8.1    
+ [5] bslib_0.4.1      later_1.3.0      git2r_0.30.1     jquerylib_0.1.4 
+ [9] tools_4.2.2      getPass_0.2-2    digest_0.6.30    memoise_2.0.1   
+[13] lattice_0.20-45  jsonlite_1.8.3   evaluate_0.18    tibble_3.1.8    
+[17] lifecycle_1.0.3  pkgconfig_2.0.3  rlang_1.0.6      cli_3.4.1       
+[21] rstudioapi_0.14  curl_4.3.3       parallel_4.2.2   yaml_2.3.6      
+[25] xfun_0.34        fastmap_1.1.0    terra_1.6-17     xml2_1.3.3      
+[29] httr_1.4.4       stringr_1.4.1    fs_1.5.2         vctrs_0.5.0     
+[33] sass_0.4.2       grid_4.2.2       rprojroot_2.0.3  glue_1.6.2      
+[37] R6_2.5.1         processx_3.8.0   fansi_1.0.3      rmarkdown_2.17  
+[41] callr_3.7.3      magrittr_2.0.3   whisker_0.4      codetools_0.2-18
+[45] ps_1.7.2         promises_1.2.0.1 htmltools_0.5.3  httpuv_1.6.6    
+[49] utf8_1.2.2       stringi_1.7.8    cachem_1.0.6    </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
