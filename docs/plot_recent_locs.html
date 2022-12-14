@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="" />
+
+<meta name="date" content="2022-12-14" />
+
+<title>Map</title>
+
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-binding-2.1.1/leaflet.js"></script>
+<script src="site_libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="site_libs/leaflet-providers-plugin-2.1.1/leaflet-providers-plugin.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SPEI PTT Data Summaries</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="plot_recent_locs.html">Map</a>
+</li>
+<li>
+  <a href="create_summary_table.html">Transmitter Status</a>
+</li>
+<li>
+  <a href="plot_ptt_temp_all.html">Transmitter Temperature</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries">
+    <span class="fab fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Map</h1>
+<h4 class="author"></h4>
+<h4 class="date">2022-12-14</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-12-14
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>spei_ptt_rt_summaries/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221121code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20221121)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221121code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221121)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrong37ce0a1">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> 37ce0a1
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrong37ce0a1"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version 37ce0a1.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/create_summary_table.Rmd
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   _workflowr.yml
+    Modified:   analysis/_site.yml
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/plot_recent_locs.Rmd</code>) and
+HTML (<code>docs/plot_recent_locs.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+37ce0a1
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2022-12-14
+</td>
+<td>
+update 14 Dec 2022
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<p>Locations were downloaded from the Movebank.org data repository on
+2022-12-14.</p>
+<pre class="r"><code># load most recent data from Movebank
+#Login&lt;-movebankLogin(username = username, password = password) 
+# use sourced script to login
+source(&quot;code/login_movebank_rizzolo.R&quot;, local = knitr::knit_global())
+
+# get Movebank project info
+FwsName &lt;- &quot;Spectacled_Eider_USFWS_Alaska&quot;
+studyIdFws &lt;- getMovebankID(FwsName, login=Login)
+
+### Read the Movebank location data into a data frame
+locs_fws &lt;- getMovebankLocationData(study=FwsName, sensorID=&quot;Argos Doppler Shift&quot;, login=Login, includeOutliers=TRUE)
+# warning messages from old residual reference data that Movebank is not deleting with each new ref data upload, for some reason
+# does not effect the current data
+
+### Read the associated Movebank reference data into a data frame.
+ref_fws &lt;- getMovebankReferenceTable(study=FwsName,login=Login)</code></pre>
+<p>Data were filtered using the Douglas Argos Filter to remove
+improbable locations based on movement rate and direction. Two weeks of
+data prior to the date the data were downloaded are shown.</p>
+<pre class="r"><code># remove locations marked as outliers based on movement rates and directions using Douglas Argos Filter, which is run in Movebank
+#table(locs_fws$algorithm.marked.outlier)
+locs_all &lt;- locs_fws
+locs_filter &lt;- subset(locs_fws, algorithm.marked.outlier != &quot;true&quot;)
+
+# combine locations and reference data
+alldata &lt;- dplyr::left_join(locs_filter, ref_fws,
+                                 by=c(&quot;deployment.id&quot; = &quot;deployment_id&quot;, &quot;sensor.type.id&quot; = &quot;sensor_type_id&quot;))
+
+# select locations from most recent 2 weeks
+recent &lt;- subset(alldata, timestamp &gt; today-14)
+
+# define range of data and sample size for locations and transmitters
+min_date &lt;- min(recent$timestamp)
+max_date &lt;- max(recent$timestamp)
+ptts &lt;- unique(recent$tag_local_identifier)
+ptt_count &lt;- length(ptts)
+location_count &lt;-length(recent) 
+
+# convert sensor 1 PTT temp from untransformed value to degrees F (PTT temps will be displayed in map)
+recent$tempC &lt;- round(-28.682 + 0.3609 * recent$argos.sensor.1, 1)
+#recent$tempF &lt;- (tempC * 1.8) + 32</code></pre>
+<p>The oldest transmitter location timestamp in this map is 2022-11-30
+04:14:17.</p>
+<p>The most recent transmitter location timestamp in this map is
+2022-12-14 16:05:04.</p>
+<p>80 locations from 31 transmitters are shown in this plot.</p>
+<p>Hover the cursor over a point to show information related to that
+location.</p>
+<p>Current data on sea ice concentration from the University of Bremen
+are available <a
+href="https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png">here</a>.</p>
+<pre class="r"><code># map &#39;em
+m &lt;- leaflet() %&gt;%
+  setView(lng = -170, lat = 63.5, zoom = 6) %&gt;%
+  addProviderTiles(&quot;Esri.OceanBasemap&quot;, group = &quot;Ocean Basemap&quot;) %&gt;%
+  addCircles(data = recent,
+             ~ location.long,
+             ~ location.lat,
+             color = &quot;red&quot;,
+             label = paste(&quot;ID:&quot;, recent$individual.local.identifier, &quot;&lt;br&gt;&quot;,
+                           &quot;Loc Date:&quot;, recent$timestamp, &quot;&lt;br&gt;&quot;,
+                           &quot;Deploy Site:&quot;, recent$study_site, &quot;&lt;br&gt;&quot;,
+                           &quot;Sex:&quot;, ifelse(recent$animal_sex == &quot;f&quot;, &quot;Female&quot;, &quot;Male&quot;), &quot;&lt;br&gt;&quot;,
+                           &quot;Age:&quot;, ifelse(recent$tag.local.identifier &gt; 198000, &quot;Juv&quot;, &quot;Adult&quot;), &quot;&lt;br&gt;&quot;,
+                           &quot;PTT temp (alive is ~ 40 C):&quot;, ifelse(recent$argos.sensor.3 != 0, recent$tempC, &quot;NA&quot;)) %&gt;% 
+               lapply(htmltools::HTML)
+             )
+
+m</code></pre>
+<div id="htmlwidget-6ee5416fefb76ab548e5" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6ee5416fefb76ab548e5">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"setView":[[63.5,-170],6,[]],"calls":[{"method":"addProviderTiles","args":["Esri.OceanBasemap",null,"Ocean Basemap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircles","args":[[62.81896,62.81878,62.81529,62.8119,62.81085,62.84111,62.86372,62.88771,62.88637,62.87169,62.87079,62.85044,62.84499,62.83487,62.84014,62.82568,62.81814,62.82146,62.81405,62.81472,62.81392,62.81285,62.80573,62.80601,62.90569,62.87228,62.85499,62.85181,62.84449,62.84395,62.90249,62.90208,62.89249,62.88885,62.88666,62.88953,62.90667,62.89239,62.89157,62.8856,62.87952,62.89785,62.90034,62.91183,62.90908,62.78976,62.79485,62.80281,62.80815,62.81927,62.82121,62.78265,62.77699,62.77257,62.76307,62.76017,62.75059,62.91646,62.91288,62.88492,62.90337,62.89335,62.90564,62.89979,62.91302,62.91057,62.9113,62.90426,62.89967,62.90307,62.90343,62.89704,62.89365,62.88873,62.89286,62.88633,62.88554,62.82487,62.82911,62.83197,62.90288,62.88512,62.89005,62.95931,62.96138,62.79606,63.00098,63.00167,63.00379,63.00911,62.99198,62.87467,62.90339,62.87334,62.84196,62.77959,62.78111,62.78452,62.79438,62.78448,62.90103,62.89943,62.90271,62.81908,62.818,62.81312,62.82886,62.79589,62.79478,62.8002,62.80466,62.82246,62.8164,62.81838,62.83966,62.93348,62.93357,62.93623,62.93681,62.93902,62.89683,62.90991,62.90931,62.91603,62.91225,62.83628,62.84177,62.94327,62.92926,62.93761,62.92689,62.92584,62.92149,62.91933,62.92048,62.93509,62.9711,62.96524,62.79698,62.80005,62.974,62.98217,62.97701,62.9805,62.97909,62.98361,62.9767,62.98445,62.98629,62.95374,62.90609,62.88482,62.81798,62.81653,62.80928,62.86507,62.83392,62.83729,62.84102,62.81061,62.87991,62.87866,62.87814,62.87883,62.88233,62.88197,62.88243,62.87484,62.85326,62.84696,62.93473,62.93898,62.94084,62.94115,62.93836,62.93206,62.93793,62.99501,62.8999,62.90614,62.9114,62.91018,62.86929,62.88034,62.87411,62.83855,62.90092,62.89348,62.89399,62.8886,62.89023,62.8924,62.90758,62.88584,62.94301,62.94133,62.94363,62.94492,62.94309,62.94367,62.9361,62.94298,62.94415,62.89018,62.88796,62.89199,62.89232,62.8956,62.89864,62.90811,62.90279,62.91182,62.83635,62.79192,62.84288,62.84869,62.88174,62.86634,62.86589,62.87049,62.95844,62.95022,62.89029,62.88277,62.89248,62.88746,62.87939,62.87096,62.87363,62.91254,62.92006,62.91588,62.9173,62.9178,62.91583,62.927,62.9302,62.93218,63.00694,63.00908,63.01825,63.02204,63.02254,63.02152,63.02153,63.02537,63.04779,63.04796,63.04828,63.04907,62.88653,62.88726,62.89712,62.89278,62.93493,62.9379,62.93986,62.90917,62.91054,62.9122,62.90918,62.83463,62.84815,62.84677,62.95177,62.94177,62.96174,62.9593,62.95803,62.94959,62.95047,62.90021,62.89637,62.8973,62.8939,62.88693,62.88391,62.88683,62.89089,62.86441,62.84413,62.84456,62.84551,62.84508,62.84199,62.84067,62.84382,62.81993,62.81346,62.81408,62.81411,62.81263,62.94739,62.93076,62.88517,62.88832,62.88702,62.88413,62.8891,62.88428,62.88844,62.90825,62.91014,62.89421,62.89463,62.878,62.88916,62.87562,62.87515,62.9176,62.91257,62.91781,62.91869,62.9596,62.96183,62.95787,62.94066,62.941,62.93418,62.9306,62.89846,62.89991,62.89763,62.90046,62.88694,62.88903,62.87174,62.69036,62.92374,62.91958,62.92373,62.92648,62.82448,62.81215,62.81137,62.80789,62.9689,62.96372,62.83641,62.83081,62.82797,62.93675,62.93523,62.9354,62.93312,62.93489,62.93969,62.84163,62.79912,62.79696,62.79513,62.7947,62.83908,62.84484,62.8376,62.83595,62.96049,62.95862,62.95202,62.9528,62.94671,62.88551,62.88037,62.91178,62.91219,62.86941,62.86952,62.86889,62.83035,62.91422,62.91714,62.91541,62.92348,62.92421,62.92172,62.89074,62.78525,62.7822,62.78332,62.78293,62.80344,62.80789,62.91836,62.92445,62.92818,62.9202,62.92759,62.92911,62.93714,62.9267,62.92946,62.93134,62.91496,62.9118,62.92368,62.92965,62.80975,62.84329,62.92229,62.81951,62.91077,65.29968,65.24713],[-170.23512,-170.20558,-170.20995,-170.20723,-170.20886,-170.17445,-170.40111,-170.40213,-170.41125,-170.32504,-170.34048,-170.19324,-170.16014,-170.17729,-170.15494,-170.13765,-170.14703,-170.14235,-170.13329,-170.13676,-170.13091,-170.1264,-170.12709,-170.12136,-170.35043,-170.27938,-170.26466,-170.22541,-170.19365,-170.19493,-170.25308,-170.2504,-170.2445,-170.24847,-170.25645,-170.25495,-170.4088,-170.41121,-170.40254,-170.43667,-170.45439,-170.4715,-170.4739,-170.4845,-170.51903,-169.97256,-169.97447,-170.00138,-170.00224,-170.02595,-170.02693,-170.32405,-170.31004,-170.3057,-170.29913,-170.29506,-170.29212,-170.272,-170.26377,-170.26543,-170.28905,-170.31667,-170.38186,-170.37263,-170.41435,-170.42264,-170.41614,-170.4141,-170.39822,-170.40178,-170.40466,-170.39822,-170.39995,-170.40905,-170.39851,-170.38678,-170.4076,-170.27097,-170.25803,-170.26948,-170.44268,-170.40828,-170.38802,-170.47807,-170.45356,-170.24522,-170.44053,-170.42955,-170.44291,-170.44106,-170.41164,-170.4729,-170.44951,-170.47255,-170.10359,-170.26105,-170.2582,-170.25575,-170.25766,-170.14333,-170.40242,-170.42371,-170.44083,-170.20671,-170.19615,-170.19144,-170.0862,-170.10934,-170.10002,-170.10858,-170.11082,-170.06497,-170.04102,-170.03331,-169.89264,-170.45915,-170.44041,-170.44737,-170.44319,-170.44505,-170.40441,-170.41888,-170.41743,-170.41077,-170.41289,-170.37713,-170.42886,-170.43584,-170.44241,-170.4278,-170.43312,-170.44201,-170.43047,-170.43526,-170.42741,-170.47476,-170.50935,-170.4374,-170.24493,-170.25768,-170.39088,-170.38795,-170.4021,-170.38933,-170.37822,-170.39355,-170.4045,-170.39662,-170.41872,-170.44983,-170.34142,-170.3711,-170.25972,-170.2819,-170.32376,-170.41234,-170.12791,-170.17067,-170.16762,-170.21643,-170.45345,-170.46037,-170.45184,-170.46416,-170.46696,-170.46252,-170.45986,-170.44511,-170.3602,-170.34554,-170.44144,-170.44704,-170.46553,-170.45544,-170.46893,-170.44196,-170.46002,-170.59608,-170.52489,-170.52433,-170.5569,-170.54827,-170.32254,-170.65892,-170.63611,-170.04564,-170.31725,-170.31229,-170.29659,-170.32002,-170.33807,-170.3449,-170.31342,-170.39888,-170.46094,-170.45304,-170.45,-170.45329,-170.44693,-170.44781,-170.42986,-170.45526,-170.45678,-170.39694,-170.38613,-170.38875,-170.38753,-170.38669,-170.38264,-170.40054,-170.35661,-170.35728,-170.27618,-170.37027,-170.37074,-170.34995,-170.3066,-170.29951,-170.29341,-170.28299,-170.46149,-170.46144,-170.40224,-170.38907,-170.42468,-170.28931,-170.24837,-170.21762,-170.22702,-170.53271,-170.48834,-170.47865,-170.45802,-170.47186,-170.35548,-170.35033,-170.39696,-170.42027,-169.45982,-169.44672,-169.45566,-169.45596,-169.45146,-169.45996,-169.46429,-169.4623,-170.06412,-170.09671,-170.10007,-170.11295,-170.31308,-170.3211,-170.30077,-170.30349,-170.27184,-170.25739,-170.26926,-170.40667,-170.42229,-170.41985,-170.42125,-170.43137,-170.50813,-170.51217,-170.35781,-170.34744,-170.34232,-170.37599,-170.37543,-170.3886,-170.39078,-170.384,-170.39096,-170.38435,-170.38599,-170.41073,-170.39871,-170.38622,-170.40602,-170.44027,-170.24985,-170.24691,-170.24653,-170.24277,-170.23679,-170.21622,-170.32785,-170.16345,-170.14281,-170.14245,-170.13937,-170.12112,-170.4535,-170.37885,-170.40993,-170.41222,-170.39668,-170.38405,-170.3976,-170.40568,-170.38295,-170.36595,-170.36607,-170.33335,-170.33398,-170.30918,-170.30931,-170.2458,-170.23694,-170.54109,-170.54694,-170.53619,-170.52304,-170.47202,-170.45744,-170.45692,-170.43891,-170.44373,-170.416,-170.4251,-170.49348,-170.49579,-170.53458,-170.24837,-170.22849,-170.22882,-170.19363,-170.22093,-170.35002,-170.34873,-170.36134,-170.36488,-170.34312,-170.33109,-170.34001,-170.3438,-170.58592,-170.59269,-170.13928,-170.15394,-170.14359,-170.46356,-170.4807,-170.47545,-170.48158,-170.4508,-170.47857,-170.31927,-170.31468,-170.31927,-170.30911,-170.30561,-170.09943,-170.11274,-170.13892,-170.17305,-170.39793,-170.39851,-170.39376,-170.44595,-170.42606,-170.38445,-170.38425,-170.38827,-170.3867,-170.20647,-170.21861,-170.21439,-170.13446,-170.50674,-170.53276,-170.53832,-170.50957,-170.5033,-170.52197,-170.31699,-170.41399,-170.41654,-170.41914,-170.38461,-170.32979,-170.32747,-170.39318,-170.40024,-170.39365,-170.38692,-170.38908,-170.3887,-170.38103,-170.38681,-170.38779,-170.36275,-170.56767,-170.55277,-170.568,-170.56618,-170.36336,-170.1713,-170.38203,-170.29984,-170.33359,-171.42905,-171.61507],10,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["ID: 197559 <br> Loc Date: 2022-12-03 03:51:44 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197559 <br> Loc Date: 2022-12-03 05:15:45 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197559 <br> Loc Date: 2022-12-03 05:51:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197559 <br> Loc Date: 2022-12-03 06:18:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197559 <br> Loc Date: 2022-12-03 06:29:38 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197559 <br> Loc Date: 2022-12-07 20:05:09 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197559 <br> Loc Date: 2022-12-12 06:50:07 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197559 <br> Loc Date: 2022-12-14 14:17:12 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197559 <br> Loc Date: 2022-12-14 15:38:52 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197560 <br> Loc Date: 2022-12-10 04:15:54 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197560 <br> Loc Date: 2022-12-10 04:55:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197561 <br> Loc Date: 2022-12-03 03:10:16 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197561 <br> Loc Date: 2022-12-03 03:33:54 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197561 <br> Loc Date: 2022-12-03 03:34:23 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-03 03:48:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197561 <br> Loc Date: 2022-12-03 04:13:13 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197561 <br> Loc Date: 2022-12-03 04:47:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-03 04:50:49 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-03 05:12:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-03 05:15:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-03 05:27:46 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197561 <br> Loc Date: 2022-12-03 05:48:03 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197561 <br> Loc Date: 2022-12-03 06:18:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197561 <br> Loc Date: 2022-12-03 06:29:51 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-05 09:28:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-07 17:34:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197561 <br> Loc Date: 2022-12-07 18:21:23 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197561 <br> Loc Date: 2022-12-07 19:13:52 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197561 <br> Loc Date: 2022-12-07 19:54:48 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197561 <br> Loc Date: 2022-12-07 19:57:24 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-10 00:06:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197561 <br> Loc Date: 2022-12-10 00:09:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197561 <br> Loc Date: 2022-12-10 01:46:37 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197561 <br> Loc Date: 2022-12-10 01:48:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-10 02:14:03 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197561 <br> Loc Date: 2022-12-10 02:35:48 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197561 <br> Loc Date: 2022-12-12 06:04:57 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197561 <br> Loc Date: 2022-12-12 06:19:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-12 06:51:01 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197561 <br> Loc Date: 2022-12-12 07:15:45 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197561 <br> Loc Date: 2022-12-12 08:02:58 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197561 <br> Loc Date: 2022-12-14 14:06:11 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197561 <br> Loc Date: 2022-12-14 14:17:24 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197561 <br> Loc Date: 2022-12-14 15:37:19 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197561 <br> Loc Date: 2022-12-14 16:05:04 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-01 06:32:26 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-01 07:23:09 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197564 <br> Loc Date: 2022-12-01 08:14:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197564 <br> Loc Date: 2022-12-01 08:30:13 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197564 <br> Loc Date: 2022-12-01 09:33:26 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-01 10:18:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-03 14:05:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-03 15:04:31 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-03 15:36:22 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-03 16:43:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-03 17:12:28 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-03 17:36:31 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-05 21:33:24 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-05 21:45:24 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-05 22:02:37 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-05 22:11:31 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197564 <br> Loc Date: 2022-12-05 23:14:09 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197564 <br> Loc Date: 2022-12-05 23:42:02 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-05 23:51:57 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-08 04:15:48 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197564 <br> Loc Date: 2022-12-08 04:17:37 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-08 04:57:00 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-08 05:03:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197564 <br> Loc Date: 2022-12-08 05:44:49 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-08 05:53:18 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197564 <br> Loc Date: 2022-12-08 06:02:16 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197564 <br> Loc Date: 2022-12-08 06:28:13 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197564 <br> Loc Date: 2022-12-08 07:07:04 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-08 07:23:23 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197564 <br> Loc Date: 2022-12-08 07:34:59 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-08 07:37:21 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197564 <br> Loc Date: 2022-12-10 13:02:45 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197564 <br> Loc Date: 2022-12-12 18:49:21 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197564 <br> Loc Date: 2022-12-12 19:51:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197564 <br> Loc Date: 2022-12-12 20:37:03 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197567 <br> Loc Date: 2022-12-02 02:38:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197567 <br> Loc Date: 2022-12-02 04:19:06 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197567 <br> Loc Date: 2022-12-02 05:28:06 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197567 <br> Loc Date: 2022-12-06 17:56:48 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197567 <br> Loc Date: 2022-12-06 18:29:04 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197567 <br> Loc Date: 2022-12-08 22:43:15 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197567 <br> Loc Date: 2022-12-11 05:42:11 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197567 <br> Loc Date: 2022-12-11 06:04:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197567 <br> Loc Date: 2022-12-11 06:23:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197567 <br> Loc Date: 2022-12-11 06:32:31 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197567 <br> Loc Date: 2022-12-11 08:09:25 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197567 <br> Loc Date: 2022-12-13 13:14:00 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197568 <br> Loc Date: 2022-12-08 07:26:06 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197568 <br> Loc Date: 2022-12-10 14:44:58 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197569 <br> Loc Date: 2022-12-01 14:23:25 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197569 <br> Loc Date: 2022-12-03 19:09:33 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197569 <br> Loc Date: 2022-12-03 19:18:15 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197569 <br> Loc Date: 2022-12-03 19:37:36 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197569 <br> Loc Date: 2022-12-03 20:21:00 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197569 <br> Loc Date: 2022-12-03 21:17:46 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197569 <br> Loc Date: 2022-12-08 08:46:29 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197569 <br> Loc Date: 2022-12-10 14:45:21 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197569 <br> Loc Date: 2022-12-10 15:12:02 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197569 <br> Loc Date: 2022-12-12 21:28:11 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197569 <br> Loc Date: 2022-12-12 21:49:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197569 <br> Loc Date: 2022-12-12 23:35:24 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197570 <br> Loc Date: 2022-12-01 14:23:16 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197570 <br> Loc Date: 2022-12-03 19:03:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-03 19:17:40 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.2","ID: 197570 <br> Loc Date: 2022-12-03 19:37:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197570 <br> Loc Date: 2022-12-03 20:21:04 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-03 20:49:18 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197570 <br> Loc Date: 2022-12-03 20:56:13 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197570 <br> Loc Date: 2022-12-03 21:13:46 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197570 <br> Loc Date: 2022-12-03 22:02:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197570 <br> Loc Date: 2022-12-06 03:01:45 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197570 <br> Loc Date: 2022-12-06 04:13:44 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197570 <br> Loc Date: 2022-12-06 04:41:46 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197570 <br> Loc Date: 2022-12-06 05:23:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-06 05:28:40 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197570 <br> Loc Date: 2022-12-10 17:58:13 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-10 19:20:54 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-10 19:37:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-10 20:28:33 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-10 20:37:28 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-13 04:05:48 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197570 <br> Loc Date: 2022-12-13 04:37:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197572 <br> Loc Date: 2022-12-02 03:49:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197572 <br> Loc Date: 2022-12-02 04:10:14 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197572 <br> Loc Date: 2022-12-02 04:15:25 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197572 <br> Loc Date: 2022-12-02 05:29:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197572 <br> Loc Date: 2022-12-02 05:49:22 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-02 06:13:03 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-02 06:37:33 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197572 <br> Loc Date: 2022-12-02 06:39:36 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-04 09:40:09 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): -28.3","ID: 197572 <br> Loc Date: 2022-12-06 16:20:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197572 <br> Loc Date: 2022-12-06 18:33:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197572 <br> Loc Date: 2022-12-08 22:36:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197572 <br> Loc Date: 2022-12-08 22:54:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197572 <br> Loc Date: 2022-12-11 04:47:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197572 <br> Loc Date: 2022-12-11 05:21:25 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197572 <br> Loc Date: 2022-12-11 05:30:23 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197572 <br> Loc Date: 2022-12-11 05:37:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-11 06:03:50 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-11 06:22:22 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-11 06:32:09 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197572 <br> Loc Date: 2022-12-11 06:57:51 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197572 <br> Loc Date: 2022-12-11 07:09:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197572 <br> Loc Date: 2022-12-11 08:10:04 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197573 <br> Loc Date: 2022-12-01 00:17:01 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197573 <br> Loc Date: 2022-12-01 03:02:57 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197573 <br> Loc Date: 2022-12-03 06:52:27 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197573 <br> Loc Date: 2022-12-03 07:31:51 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197573 <br> Loc Date: 2022-12-03 08:11:12 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197573 <br> Loc Date: 2022-12-05 16:37:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197573 <br> Loc Date: 2022-12-07 21:15:26 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197573 <br> Loc Date: 2022-12-07 21:31:13 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197573 <br> Loc Date: 2022-12-07 21:44:23 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197573 <br> Loc Date: 2022-12-07 23:10:38 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197573 <br> Loc Date: 2022-12-10 04:56:48 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197573 <br> Loc Date: 2022-12-10 05:31:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197573 <br> Loc Date: 2022-12-10 05:57:44 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197573 <br> Loc Date: 2022-12-10 06:34:52 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197573 <br> Loc Date: 2022-12-10 06:44:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197573 <br> Loc Date: 2022-12-10 06:46:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197573 <br> Loc Date: 2022-12-10 07:14:58 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197573 <br> Loc Date: 2022-12-10 08:13:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197573 <br> Loc Date: 2022-12-12 13:44:26 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197573 <br> Loc Date: 2022-12-12 15:22:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197574 <br> Loc Date: 2022-12-06 16:50:02 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197575 <br> Loc Date: 2022-11-30 04:14:17 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197575 <br> Loc Date: 2022-11-30 05:07:59 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197575 <br> Loc Date: 2022-11-30 05:09:08 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197575 <br> Loc Date: 2022-11-30 05:14:22 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197575 <br> Loc Date: 2022-11-30 05:36:46 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197575 <br> Loc Date: 2022-11-30 05:48:51 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197575 <br> Loc Date: 2022-12-04 18:50:35 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197575 <br> Loc Date: 2022-12-09 05:28:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197575 <br> Loc Date: 2022-12-09 05:44:20 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197575 <br> Loc Date: 2022-12-09 06:13:27 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197575 <br> Loc Date: 2022-12-09 06:19:49 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197575 <br> Loc Date: 2022-12-11 14:56:11 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197575 <br> Loc Date: 2022-12-13 20:32:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197575 <br> Loc Date: 2022-12-13 21:10:08 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197576 <br> Loc Date: 2022-12-03 22:03:46 <br> Deploy Site: YKD_Tutakoke <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-01 16:46:08 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-01 17:43:54 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197577 <br> Loc Date: 2022-12-01 17:48:02 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197577 <br> Loc Date: 2022-12-01 18:27:24 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197577 <br> Loc Date: 2022-12-01 19:32:15 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197577 <br> Loc Date: 2022-12-01 20:19:38 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-03 23:43:29 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-04 01:45:43 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-06 05:54:59 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-06 06:26:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197577 <br> Loc Date: 2022-12-06 07:00:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-06 07:03:06 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-06 07:32:57 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-06 08:04:21 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-06 08:37:31 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-06 09:10:39 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197577 <br> Loc Date: 2022-12-06 09:52:03 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197577 <br> Loc Date: 2022-12-10 19:21:18 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 19:37:21 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 20:28:41 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 20:33:52 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 21:01:54 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 21:15:56 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 22:08:19 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 22:12:59 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-10 22:42:36 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197577 <br> Loc Date: 2022-12-13 02:58:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-13 04:05:34 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197577 <br> Loc Date: 2022-12-13 04:37:22 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197577 <br> Loc Date: 2022-12-13 05:05:33 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-02 18:02:26 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-02 19:21:42 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-02 19:41:34 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-02 19:57:09 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-05 03:02:37 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197578 <br> Loc Date: 2022-12-05 03:12:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197578 <br> Loc Date: 2022-12-07 06:31:14 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197578 <br> Loc Date: 2022-12-07 06:50:34 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197578 <br> Loc Date: 2022-12-09 13:38:30 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197578 <br> Loc Date: 2022-12-11 20:13:00 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-11 20:58:00 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-11 21:55:31 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-11 22:05:04 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197578 <br> Loc Date: 2022-12-14 03:07:51 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197578 <br> Loc Date: 2022-12-14 04:49:47 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197578 <br> Loc Date: 2022-12-14 05:25:21 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197578 <br> Loc Date: 2022-12-14 05:56:11 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197578 <br> Loc Date: 2022-12-14 05:59:10 <br> Deploy Site: YKD_Tutakoke <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-01 20:19:04 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197579 <br> Loc Date: 2022-12-01 20:47:13 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197579 <br> Loc Date: 2022-12-01 22:20:42 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197579 <br> Loc Date: 2022-12-01 23:34:45 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-04 03:28:43 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-04 03:51:21 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-04 04:31:48 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-04 04:37:10 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-04 04:43:30 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-04 05:01:31 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-04 05:09:17 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-04 05:28:15 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197579 <br> Loc Date: 2022-12-08 14:05:58 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197579 <br> Loc Date: 2022-12-08 15:46:26 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-08 15:47:34 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-08 17:21:08 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197579 <br> Loc Date: 2022-12-10 19:25:19 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-10 19:37:57 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197579 <br> Loc Date: 2022-12-10 20:28:18 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-10 20:32:24 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-10 21:15:31 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-10 22:08:48 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-10 22:15:59 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197579 <br> Loc Date: 2022-12-13 04:05:29 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197579 <br> Loc Date: 2022-12-13 04:55:01 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197579 <br> Loc Date: 2022-12-13 05:03:12 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197579 <br> Loc Date: 2022-12-13 05:04:33 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197580 <br> Loc Date: 2022-12-03 09:52:44 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197580 <br> Loc Date: 2022-12-03 11:48:23 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197580 <br> Loc Date: 2022-12-03 13:21:58 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197580 <br> Loc Date: 2022-12-05 18:25:07 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-05 18:44:08 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-05 19:53:24 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-05 20:20:41 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-05 20:32:28 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-05 21:22:55 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197580 <br> Loc Date: 2022-12-05 21:33:41 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197580 <br> Loc Date: 2022-12-08 03:28:15 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-08 04:14:50 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-08 04:18:35 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-08 04:57:37 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-08 05:03:32 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197580 <br> Loc Date: 2022-12-08 05:45:40 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197580 <br> Loc Date: 2022-12-08 06:00:57 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-08 06:28:10 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197580 <br> Loc Date: 2022-12-10 14:45:40 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197580 <br> Loc Date: 2022-12-12 19:52:13 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197580 <br> Loc Date: 2022-12-12 20:28:13 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-12 20:38:39 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197580 <br> Loc Date: 2022-12-12 21:27:24 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-12 21:54:50 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-12 22:18:16 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197580 <br> Loc Date: 2022-12-12 23:06:39 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-02 18:03:05 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197582 <br> Loc Date: 2022-12-02 19:16:23 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197582 <br> Loc Date: 2022-12-02 19:41:54 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197582 <br> Loc Date: 2022-12-02 19:57:30 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197582 <br> Loc Date: 2022-12-02 20:35:16 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197582 <br> Loc Date: 2022-12-05 00:12:35 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197582 <br> Loc Date: 2022-12-05 01:52:53 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197582 <br> Loc Date: 2022-12-07 06:05:44 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197582 <br> Loc Date: 2022-12-07 06:07:43 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197582 <br> Loc Date: 2022-12-07 06:50:07 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197582 <br> Loc Date: 2022-12-07 07:12:22 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197582 <br> Loc Date: 2022-12-07 07:22:11 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41.3","ID: 197582 <br> Loc Date: 2022-12-07 07:46:47 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197582 <br> Loc Date: 2022-12-07 08:58:18 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197582 <br> Loc Date: 2022-12-09 15:15:36 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-09 15:29:53 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-11 19:12:34 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-11 19:14:39 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-11 20:13:56 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-11 20:50:54 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-11 21:54:47 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-11 22:04:52 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-14 04:10:39 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197582 <br> Loc Date: 2022-12-14 04:31:43 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197582 <br> Loc Date: 2022-12-14 04:49:40 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197582 <br> Loc Date: 2022-12-14 05:24:49 <br> Deploy Site: ACP_Teshekpuk <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197585 <br> Loc Date: 2022-12-05 04:42:18 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197585 <br> Loc Date: 2022-12-05 04:49:58 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197585 <br> Loc Date: 2022-12-05 05:07:55 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197585 <br> Loc Date: 2022-12-05 05:47:02 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197585 <br> Loc Date: 2022-12-05 05:54:55 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197585 <br> Loc Date: 2022-12-05 06:06:29 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197585 <br> Loc Date: 2022-12-05 06:21:56 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197586 <br> Loc Date: 2022-12-04 14:37:41 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197586 <br> Loc Date: 2022-12-04 15:21:16 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197586 <br> Loc Date: 2022-12-04 16:13:59 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197586 <br> Loc Date: 2022-12-11 20:25:37 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197586 <br> Loc Date: 2022-12-11 20:50:07 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197586 <br> Loc Date: 2022-12-11 20:50:39 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197586 <br> Loc Date: 2022-12-11 22:01:04 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197589 <br> Loc Date: 2022-12-08 23:44:26 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197590 <br> Loc Date: 2022-12-05 18:51:35 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197590 <br> Loc Date: 2022-12-05 19:53:17 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197590 <br> Loc Date: 2022-12-05 20:20:25 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197590 <br> Loc Date: 2022-12-05 20:31:36 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197590 <br> Loc Date: 2022-12-13 02:26:44 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197590 <br> Loc Date: 2022-12-13 02:57:08 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197590 <br> Loc Date: 2022-12-13 03:18:28 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197590 <br> Loc Date: 2022-12-13 03:20:03 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197591 <br> Loc Date: 2022-12-04 12:55:08 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197591 <br> Loc Date: 2022-12-04 14:29:17 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197591 <br> Loc Date: 2022-12-11 22:30:19 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197591 <br> Loc Date: 2022-12-11 23:29:05 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197591 <br> Loc Date: 2022-12-11 23:42:27 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197591 <br> Loc Date: 2022-12-14 07:02:40 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197591 <br> Loc Date: 2022-12-14 07:35:58 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197591 <br> Loc Date: 2022-12-14 07:47:23 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197591 <br> Loc Date: 2022-12-14 08:11:26 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197591 <br> Loc Date: 2022-12-14 08:45:46 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197591 <br> Loc Date: 2022-12-14 09:14:31 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197594 <br> Loc Date: 2022-12-01 16:12:02 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197594 <br> Loc Date: 2022-12-08 18:10:39 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197594 <br> Loc Date: 2022-12-08 18:48:19 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197594 <br> Loc Date: 2022-12-08 19:29:59 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197594 <br> Loc Date: 2022-12-08 19:45:24 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197595 <br> Loc Date: 2022-12-02 20:33:52 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197595 <br> Loc Date: 2022-12-02 20:57:10 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197595 <br> Loc Date: 2022-12-02 21:35:04 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197595 <br> Loc Date: 2022-12-02 22:09:51 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197595 <br> Loc Date: 2022-12-05 04:12:40 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197595 <br> Loc Date: 2022-12-05 04:51:12 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197595 <br> Loc Date: 2022-12-05 05:08:22 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197595 <br> Loc Date: 2022-12-05 05:46:24 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197595 <br> Loc Date: 2022-12-05 05:54:10 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197595 <br> Loc Date: 2022-12-07 08:06:11 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197595 <br> Loc Date: 2022-12-07 09:02:22 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197595 <br> Loc Date: 2022-12-09 15:16:15 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197595 <br> Loc Date: 2022-12-09 15:30:33 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197595 <br> Loc Date: 2022-12-11 20:50:53 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197595 <br> Loc Date: 2022-12-11 21:50:33 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197595 <br> Loc Date: 2022-12-11 22:04:18 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197595 <br> Loc Date: 2022-12-11 23:42:15 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197595 <br> Loc Date: 2022-12-14 02:06:19 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 41","ID: 197595 <br> Loc Date: 2022-12-14 03:07:02 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197595 <br> Loc Date: 2022-12-14 04:15:53 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197595 <br> Loc Date: 2022-12-14 04:44:10 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197595 <br> Loc Date: 2022-12-14 05:22:11 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197595 <br> Loc Date: 2022-12-14 05:53:56 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-01 14:27:16 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-03 19:03:42 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-03 19:17:47 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197596 <br> Loc Date: 2022-12-03 19:33:26 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197596 <br> Loc Date: 2022-12-03 21:13:43 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-03 21:56:48 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-03 22:27:19 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-06 03:01:04 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-06 04:17:27 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.2","ID: 197596 <br> Loc Date: 2022-12-06 04:41:55 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-06 04:52:55 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-06 05:23:50 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-06 05:28:34 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-06 05:54:45 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-06 05:58:04 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-06 06:19:21 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-06 06:29:49 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-10 19:26:03 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-10 19:37:34 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 197596 <br> Loc Date: 2022-12-10 20:32:51 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197596 <br> Loc Date: 2022-12-10 21:01:45 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.5","ID: 197596 <br> Loc Date: 2022-12-13 01:21:37 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Female <br> Age: Adult <br> PTT temp (alive is ~ 40 C): NA","ID: 197597 <br> Loc Date: 2022-12-12 01:10:55 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 40.6","ID: 197598 <br> Loc Date: 2022-12-11 16:29:45 <br> Deploy Site: ACP_Utqiagvik <br> Sex: Male <br> Age: Adult <br> PTT temp (alive is ~ 40 C): 39.9","ID: 229958 <br> Loc Date: 2022-12-03 06:30:23 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Male <br> Age: Juv <br> PTT temp (alive is ~ 40 C): NA","ID: 229961 <br> Loc Date: 2022-12-09 19:38:35 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Male <br> Age: Juv <br> PTT temp (alive is ~ 40 C): 39.5","ID: 229964 <br> Loc Date: 2022-12-07 16:20:04 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Juv <br> PTT temp (alive is ~ 40 C): NA","ID: 229964 <br> Loc Date: 2022-12-09 22:34:07 <br> Deploy Site: YKD_Hock_Slough <br> Sex: Female <br> Age: Juv <br> PTT temp (alive is ~ 40 C): 40.6"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[62.69036,65.29968],"lng":[-171.61507,-169.44672]}},"evals":[],"jsHooks":[]}</script>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.2.2 (2022-10-31 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8 
+[2] LC_CTYPE=English_United States.utf8   
+[3] LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] htmltools_0.5.3  move_4.1.10      rgdal_1.5-32     raster_3.6-3    
+ [5] sp_1.5-0         geosphere_1.5-14 forcats_0.5.2    stringr_1.4.1   
+ [9] dplyr_1.0.10     purrr_0.3.5      readr_2.1.3      tidyr_1.2.1     
+[13] tibble_3.1.8     ggplot2_3.4.0    tidyverse_1.3.2  leaflet_2.1.1   
+[17] workflowr_1.7.0 
+
+loaded via a namespace (and not attached):
+ [1] fs_1.5.2                lubridate_1.8.0         httr_1.4.4             
+ [4] rprojroot_2.0.3         tools_4.2.2             backports_1.4.1        
+ [7] bslib_0.4.1             utf8_1.2.2              R6_2.5.1               
+[10] DBI_1.1.3               colorspace_2.0-3        withr_2.5.0            
+[13] tidyselect_1.2.0        processx_3.8.0          curl_4.3.3             
+[16] compiler_4.2.2          git2r_0.30.1            cli_3.4.1              
+[19] rvest_1.0.3             xml2_1.3.3              sass_0.4.2             
+[22] scales_1.2.1            callr_3.7.3             digest_0.6.30          
+[25] rmarkdown_2.17          pkgconfig_2.0.3         dbplyr_2.2.1           
+[28] fastmap_1.1.0           htmlwidgets_1.5.4       rlang_1.0.6            
+[31] readxl_1.4.1            rstudioapi_0.14         jquerylib_0.1.4        
+[34] generics_0.1.3          jsonlite_1.8.3          crosstalk_1.2.0        
+[37] googlesheets4_1.0.1     magrittr_2.0.3          Rcpp_1.0.9             
+[40] munsell_0.5.0           fansi_1.0.3             lifecycle_1.0.3        
+[43] terra_1.6-17            stringi_1.7.8           whisker_0.4            
+[46] yaml_2.3.6              grid_4.2.2              parallel_4.2.2         
+[49] promises_1.2.0.1        crayon_1.5.2            lattice_0.20-45        
+[52] haven_2.5.1             hms_1.1.2               knitr_1.40             
+[55] ps_1.7.2                pillar_1.8.1            codetools_0.2-18       
+[58] reprex_2.0.2            glue_1.6.2              evaluate_0.18          
+[61] getPass_0.2-2           leaflet.providers_1.9.0 modelr_0.1.9           
+[64] vctrs_0.5.0             tzdb_0.3.0              httpuv_1.6.6           
+[67] cellranger_1.1.0        gtable_0.3.1            assertthat_0.2.1       
+[70] cachem_1.0.6            xfun_0.34               broom_1.0.1            
+[73] later_1.3.0             googledrive_2.0.0       gargle_1.2.1           
+[76] memoise_2.0.1           ellipsis_0.3.2         </code></pre>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
