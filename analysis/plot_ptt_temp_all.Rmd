@@ -1,0 +1,98 @@
+---
+title: "Transmitter temperatures"
+author: 
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+# got packages?
+library(ggplot2) # plot data
+library(gridExtra) # create PDF plots
+library(move) # to access data in Movebank
+
+# set current date
+today<-Sys.Date()
+```
+
+Data transmitted by each active satellite transmitter includes the temperature of the transmitter (sensor 1 data). Transmitter temperature is the body temperature of the eider and should be ~ 40 °C. Transmitters in dead birds will be ambient temperature. 
+
+This code downloads data from satellite transmitters deployed by the USFWS from Movebank.org, which is setup with a live feed of data from all active transmitters and is a repository for all data from transmitters that are no longer active.
+
+As eiders are detected consistently cold, indicating a mortality, I define the deployment end date from that transmitter in Movebank so that locations from the cold transmitter are not shown beyond the date of the mortality. 
+
+```{r loginto  Movebank}
+# load most recent data from Movebank
+#Login<-movebankLogin(username = username, password = password) 
+# sourced script to login
+source("code/login_movebank_rizzolo.R", local = knitr::knit_global())
+```
+
+```{r load from Movebank, warning = FALSE}
+
+# Get Movebank project info
+FwsName <- "Spectacled_Eider_USFWS_Alaska"
+studyIdFws <- getMovebankID(FwsName, login=Login)
+
+# Download the Movebank location data into a data frame
+locs_fws <- getMovebankLocationData(study=FwsName, sensorID="Argos Doppler Shift", login=Login, includeOutliers=TRUE)
+
+### Download the associated Movebank reference data into a data frame
+#ref_fws <- getMovebankReferenceTable(study=FwsName,login=Login)
+```
+### Filter data
+Before plotting, remove: 
+
+1. locations with missing sensor 1 (temperature) data, indicated with -999
+2. records with special transmission data (every 4th duty cycle) that do not represent temperature, indicated by argos.sensor.3 = 0 
+3. transmitters deployed before 2022
+
+```{r filter data}
+# Remove locations marked as outliers based on movement rates and directions using Douglas Argos Filter
+#table(locs_fws$algorithm.marked.outlier)
+locs_all <- locs_fws
+#locs_filter <- subset(locs_fws, algorithm.marked.outlier != "true")
+locs_start <- locs_all
+#locs_start <- locs_filter
+
+# remove NA data for transmitter sensor 1 (temperature) indicated with -999
+locs <- subset(locs_start,  argos.sensor.1 != -999)
+
+# remove special transmission (every 4th duty cycle) indicated by  argos.sensor.3 = 0 (see MTI Battery Powered PTT-100 Field Manual, p 17)
+locs <- subset(locs,  argos.sensor.3 != 0)
+
+#convert date field from factor to date format
+locs$timestamp <- as.POSIXct(locs$timestamp, format = "%Y-%m-%d %H:%M:%S")
+
+#convert sensor.01 values to deg C (from Microwave Telem field manual)
+locs$btemp <- -28.682 + 0.3609*locs$argos.sensor.1
+
+# look at distribution of btemp
+#hist(locs$btemp)
+
+# create list of active transmitters with timestamp year > 2021 (i.e., remove transmitters from the 2018 deployment)
+active <- subset(locs, format(locs$timestamp, format("%Y")) > 2021)
+#hist(active$btemp)
+```
+
+### Plot transmitter temperature by transmitter ID
+
+Mortalities will be indicated by temperatures consistently below 40 °C (the range of temperatures likely associated living eiders is indicated by the green band in the plots). Departures from 40 °C unrelated to mortality happen. Mortalities will be indicated by multiple temperature readings < 40 °C. Adult transmitters (with transmitter IDs starting with 197) are programmed to transmit every 6.6 days until early December 2022 and then will increase to every 2 days until mid-April 2023. Juvenile transmitters (with transmitter IDs starting with 229) transmit every 2 days. Transmitters may miss duty cycles and some have not transmitted for prolonged periods without any indication of mortality. 
+
+```{r plots, warning = FALSE, message = FALSE}
+for(var in unique(active$tag.local.identifier)){
+  print(ggplot(active[active$tag.local.identifier==var,], aes(timestamp, btemp))+
+          geom_rect(ymin = 38,ymax = 42,xmin = -Inf,xmax = Inf,fill = "green")+
+          geom_point()+
+          geom_line()+
+          ylim(min(active$btemp), max(active$btemp))+
+          scale_x_datetime(limits = c(min(active$timestamp), max(active$timestamp)))+
+          ggtitle(label = var)
+  )
+}
+```
