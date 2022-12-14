@@ -7,5 +7,10 @@ output:
 editor_options:
   chunk_output_type: console
 ---
+Data summaries for active satellite transmitters deployed in Spectacled Eiders by the U.S. Fish and Wildlife Service:
 
-Welcome to my research website.
+* [Map of recent locations](plot_recent_locs.html)
+
+* [Transmitter status](create_summary_table.html)
+
+* [Transmitter temperature](plot_ptt_temp_all.html)
