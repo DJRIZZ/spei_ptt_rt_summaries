@@ -1,17 +1,29 @@
-name: "spei_ptt_rt_summaries"
+name: SPEI PTT Data Summaries
 output_dir: ../docs
 navbar:
-  title: "spei_ptt_rt_summaries"
+  title: SPEI PTT Data Summaries
   left:
   - text: Home
     href: index.html
+  - text: Map
+    href: plot_recent_locs.html
+  - text: Transmitter Status
+    href: create_summary_table.html
+  - text: Transmitter Temperature
+    href: plot_ptt_temp_all.html
   - text: About
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fab fa-github
+    text: Source code
+    href: https://github.com/DJRIZZ/spei_ptt_rt_summaries
 output:
   workflowr::wflow_html:
     toc: yes
-    toc_float: yes
-    theme: cosmo
+    toc_float:
+      collapsed: no
+    theme: flatly
+    code_folding: hide
     highlight: textmate
