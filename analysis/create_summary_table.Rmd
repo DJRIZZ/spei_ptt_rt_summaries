@@ -130,11 +130,58 @@ id_ptt_juv <- as.numeric(id_ptt_juv)
 id_ptt <- c(id_ptt_ad, id_ptt_juv)
 
 # from tbl_fates in database spei_ptt_2018_2022.accdb
-status <- c("active", "active", "active", "active", "cold", "active", "ambiguous", "messages_only", "active", "ambiguous",
-           "active", "active","active","active","active","active","active", "messages_only", "active", "ambiguous", "active", "active",
-           "cold", "active", "active", "cold", "active","active", "cold", "cold", "ambiguous", "active", "active", "ambiguous", "active",
-           "active", "active", "active", "messages_only", "messages_only", "ambiguous", "ambiguous", "cold", "cold", "cold",
-           "active", "cold", "active", "active", "cold", "active", "cold")
+status <- c("active", #197559
+            "active", #197560
+            "active", #197561
+            "active", #197562
+            "cold", #197563
+            "active", #197564
+            "active", #197565
+            "active", #197566
+            "active", #197567
+            "active",#197568
+           "active", #197569
+           "active",#197570
+           "active",#197571
+           "active",#197572
+           "ambiguous",#197573
+           "active",#197574
+           "active", #197575
+           "ambiguous", #197576
+           "active", #197577
+           "active", #197578
+           "active", #197579
+           "active",#197580
+           "cold", #197581 
+           "active", #197582
+           "active", #197583
+           "cold", #197584
+           "active", #197585
+           "active", #197586
+           "cold", #197587
+           "cold", #197588
+           "active", #197589
+           "active", #197590
+           "active", #197591
+           "ambiguous", #197592
+           "active", #197593
+           "active", #197594
+           "active", #197595
+           "active", #197596
+           "active", #197597
+           "active", #197598
+           "ambiguous", #229950
+           "ambiguous", #229951
+           "cold", #229952
+           "cold",#229953
+           "cold",#229954
+           "active", #229955
+           "cold", #229957
+           "active",#229958
+           "active", #229961
+           "cold", #229963
+           "cold", #229964
+           "cold") #229965
 
 fates_df <- data.frame(id_ptt, status)
 
