@@ -548,15 +548,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestreecd1f0621252ced0e87a1e582d5b22fa8f22c0d99targetblankcd1f062a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree55b74db82a2aa827e67c0f6f1ccabc33b65effectargetblank55b74dba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/cd1f0621252ced0e87a1e582d5b22fa8f22c0d99" target="_blank">cd1f062</a>
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/55b74db82a2aa827e67c0f6f1ccabc33b65effec" target="_blank">55b74db</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestreecd1f0621252ced0e87a1e582d5b22fa8f22c0d99targetblankcd1f062a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree55b74db82a2aa827e67c0f6f1ccabc33b65effectargetblank55b74dba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -566,7 +566,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/cd1f0621252ced0e87a1e582d5b22fa8f22c0d99" target="_blank">cd1f062</a>.
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/55b74db82a2aa827e67c0f6f1ccabc33b65effec" target="_blank">55b74db</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -638,6 +638,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/blob/55b74db82a2aa827e67c0f6f1ccabc33b65effec/analysis/create_summary_table.Rmd" target="_blank">55b74db</a>
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2023-01-05
+</td>
+<td>
+update 05 Jan 2023 with current status for each ptt
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DJRIZZ/spei_ptt_rt_summaries/28f05c400dcb822c917c0c898ad4ce62d468208c/docs/create_summary_table.html" target="_blank">28f05c4</a>
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2023-01-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -825,11 +859,58 @@ id_ptt_juv &lt;- as.numeric(id_ptt_juv)
 id_ptt &lt;- c(id_ptt_ad, id_ptt_juv)
 
 # from tbl_fates in database spei_ptt_2018_2022.accdb
-status &lt;- c(&quot;active&quot;, &quot;active&quot;, &quot;active&quot;, &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;ambiguous&quot;, &quot;messages_only&quot;, &quot;active&quot;, &quot;ambiguous&quot;,
-           &quot;active&quot;, &quot;active&quot;,&quot;active&quot;,&quot;active&quot;,&quot;active&quot;,&quot;active&quot;,&quot;active&quot;, &quot;messages_only&quot;, &quot;active&quot;, &quot;ambiguous&quot;, &quot;active&quot;, &quot;active&quot;,
-           &quot;cold&quot;, &quot;active&quot;, &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;,&quot;active&quot;, &quot;cold&quot;, &quot;cold&quot;, &quot;ambiguous&quot;, &quot;active&quot;, &quot;active&quot;, &quot;ambiguous&quot;, &quot;active&quot;,
-           &quot;active&quot;, &quot;active&quot;, &quot;active&quot;, &quot;messages_only&quot;, &quot;messages_only&quot;, &quot;ambiguous&quot;, &quot;ambiguous&quot;, &quot;cold&quot;, &quot;cold&quot;, &quot;cold&quot;,
-           &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;active&quot;, &quot;cold&quot;, &quot;active&quot;, &quot;cold&quot;)
+status &lt;- c(&quot;active&quot;, #197559
+            &quot;active&quot;, #197560
+            &quot;active&quot;, #197561
+            &quot;active&quot;, #197562
+            &quot;cold&quot;, #197563
+            &quot;active&quot;, #197564
+            &quot;active&quot;, #197565
+            &quot;active&quot;, #197566
+            &quot;active&quot;, #197567
+            &quot;active&quot;,#197568
+           &quot;active&quot;, #197569
+           &quot;active&quot;,#197570
+           &quot;active&quot;,#197571
+           &quot;active&quot;,#197572
+           &quot;ambiguous&quot;,#197573
+           &quot;active&quot;,#197574
+           &quot;active&quot;, #197575
+           &quot;ambiguous&quot;, #197576
+           &quot;active&quot;, #197577
+           &quot;active&quot;, #197578
+           &quot;active&quot;, #197579
+           &quot;active&quot;,#197580
+           &quot;cold&quot;, #197581 
+           &quot;active&quot;, #197582
+           &quot;active&quot;, #197583
+           &quot;cold&quot;, #197584
+           &quot;active&quot;, #197585
+           &quot;active&quot;, #197586
+           &quot;cold&quot;, #197587
+           &quot;cold&quot;, #197588
+           &quot;active&quot;, #197589
+           &quot;active&quot;, #197590
+           &quot;active&quot;, #197591
+           &quot;ambiguous&quot;, #197592
+           &quot;active&quot;, #197593
+           &quot;active&quot;, #197594
+           &quot;active&quot;, #197595
+           &quot;active&quot;, #197596
+           &quot;active&quot;, #197597
+           &quot;active&quot;, #197598
+           &quot;ambiguous&quot;, #229950
+           &quot;ambiguous&quot;, #229951
+           &quot;cold&quot;, #229952
+           &quot;cold&quot;,#229953
+           &quot;cold&quot;,#229954
+           &quot;active&quot;, #229955
+           &quot;cold&quot;, #229957
+           &quot;active&quot;,#229958
+           &quot;active&quot;, #229961
+           &quot;cold&quot;, #229963
+           &quot;cold&quot;, #229964
+           &quot;cold&quot;) #229965
 
 fates_df &lt;- data.frame(id_ptt, status)
 
@@ -848,14 +929,14 @@ ptt_count &lt;- nrow(ptt_sum)
 #         Poor transmitter performance.
 
 kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="9%" />
-<col width="27%" />
-<col width="16%" />
-<col width="13%" />
+<col width="10%" />
+<col width="28%" />
+<col width="17%" />
 <col width="14%" />
-<col width="18%" />
+<col width="15%" />
+<col width="14%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -874,7 +955,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">40.2519</td>
 <td align="right">39.81882</td>
 <td align="right">3.82752</td>
-<td align="left">ambiguous</td>
+<td align="left">active</td>
 </tr>
 <tr class="even">
 <td align="right">229955</td>
@@ -962,7 +1043,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">40.9737</td>
 <td align="right">40.39626</td>
 <td align="right">3.81440</td>
-<td align="left">ambiguous</td>
+<td align="left">active</td>
 </tr>
 <tr class="odd">
 <td align="right">197596</td>
@@ -978,7 +1059,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">41.3346</td>
 <td align="right">40.90152</td>
 <td align="right">3.85376</td>
-<td align="left">ambiguous</td>
+<td align="left">active</td>
 </tr>
 <tr class="odd">
 <td align="right">197577</td>
@@ -1090,7 +1171,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">-27.2364</td>
 <td align="right">40.46844</td>
 <td align="right">3.83080</td>
-<td align="left">messages_only</td>
+<td align="left">active</td>
 </tr>
 <tr class="odd">
 <td align="right">197598</td>
@@ -1098,7 +1179,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">39.8910</td>
 <td align="right">40.03536</td>
 <td align="right">3.81112</td>
-<td align="left">messages_only</td>
+<td align="left">active</td>
 </tr>
 <tr class="even">
 <td align="right">197597</td>
@@ -1106,7 +1187,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">39.8910</td>
 <td align="right">40.17972</td>
 <td align="right">3.83080</td>
-<td align="left">messages_only</td>
+<td align="left">active</td>
 </tr>
 <tr class="odd">
 <td align="right">197569</td>
@@ -1130,7 +1211,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">40.2519</td>
 <td align="right">40.03536</td>
 <td align="right">3.82506</td>
-<td align="left">ambiguous</td>
+<td align="left">active</td>
 </tr>
 <tr class="even">
 <td align="right">197594</td>
@@ -1146,7 +1227,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">-27.2364</td>
 <td align="right">33.25044</td>
 <td align="right">3.83080</td>
-<td align="left">messages_only</td>
+<td align="left">ambiguous</td>
 </tr>
 <tr class="even">
 <td align="right">197573</td>
@@ -1154,7 +1235,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">40.2519</td>
 <td align="right">40.54062</td>
 <td align="right">3.15184</td>
-<td align="left">active</td>
+<td align="left">ambiguous</td>
 </tr>
 <tr class="odd">
 <td align="right">229964</td>
@@ -1162,7 +1243,7 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 <td align="right">-27.5973</td>
 <td align="right">28.70310</td>
 <td align="right">3.70288</td>
-<td align="left">active</td>
+<td align="left">cold</td>
 </tr>
 <tr class="even">
 <td align="right">229953</td>
@@ -1272,8 +1353,8 @@ kable(ptt_sum[ ,-3], row.names = FALSE)</code></pre>
 </table>
 <pre class="r"><code>table(fates_df$status)</code></pre>
 <pre><code>
-       active     ambiguous          cold messages_only 
-           30             7            11             4 </code></pre>
+   active ambiguous      cold 
+       35         5        12 </code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
