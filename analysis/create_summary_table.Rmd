@@ -133,7 +133,7 @@ id_ptt <- c(id_ptt_ad, id_ptt_juv)
 status <- c("active", "active", "active", "active", "cold", "active", "ambiguous", "messages_only", "active", "ambiguous",
            "active", "active","active","active","active","active","active", "messages_only", "active", "ambiguous", "active", "active",
            "cold", "active", "active", "cold", "active","active", "cold", "cold", "ambiguous", "active", "active", "ambiguous", "active",
-           "active", "active", "active", "messages_only", "messages_only", "ambiguous", "ambiguous", "cold", "active", "cold",
+           "active", "active", "active", "messages_only", "messages_only", "ambiguous", "ambiguous", "cold", "cold", "cold",
            "active", "cold", "active", "active", "cold", "active", "cold")
 
 fates_df <- data.frame(id_ptt, status)
