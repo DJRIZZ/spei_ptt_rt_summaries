@@ -75,6 +75,8 @@ The most recent transmitter location timestamp in this map is `r max_date`.
 
 Hover the cursor over a point to show information related to that location. 
 
+Select the background map from menu in upper-left corner (ESRI bathymetric, or satellite image).
+
 Current data on sea ice concentration from the University of Bremen are available [here](https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png).
 
 ```{r leaflet map, warning = FALSE}
@@ -82,6 +84,20 @@ Current data on sea ice concentration from the University of Bremen are availabl
 m <- leaflet() %>%
   setView(lng = -170, lat = 63.5, zoom = 6) %>%
   addProviderTiles("Esri.OceanBasemap", group = "Ocean Basemap") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
+  addLayersControl( baseGroups = c("Ocean Basemap",
+                  "Satellite"),
+    options = layersControlOptions(collapsed = FALSE),
+    position = 'topright'
+  ) %>% 
+  addScaleBar(position = 'topright') %>%
+  addMeasure(
+    primaryLengthUnit = "kilometers",
+    secondaryLengthUnit = 'miles',
+    primaryAreaUnit = "sqmeters",
+    secondaryAreaUnit = "acres",
+    position = 'topleft'
+  ) %>%
   addCircles(data = improb,
              ~ location.long,
              ~ location.lat,
