@@ -140,9 +140,9 @@ status <- c("active", #197559
             "active", #197566
             "active", #197567
             "active",#197568
-           "active", #197569
+           "ambiguous", #197569
            "active",#197570
-           "active",#197571
+           "ambiguous",#197571
            "active",#197572
            "ambiguous",#197573
            "active",#197574
