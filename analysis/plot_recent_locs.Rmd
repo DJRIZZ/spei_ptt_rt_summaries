@@ -39,7 +39,7 @@ ref_fws <- getMovebankReferenceTable(study=FwsName,login=Login)
 
 ```
 
-Data not filtered before plotting. All locations received during each duty cycle were included. Two weeks of data prior to the date the data were downloaded are shown.
+Data were not filtered before plotting. All locations received during each duty cycle were included. Two weeks of data prior to the date the data were downloaded are shown.
 ```{r data filtering, warning = FALSE}
 # combine locations and reference data for filtered locations
 alldata <- dplyr::left_join(locs_fws, ref_fws,
@@ -72,10 +72,9 @@ The most recent transmitter location timestamp in this map is `r max_date`.
 
 `r location_count` locations from `r ptt_count` transmitters are shown in this plot.
 
-
 Hover the cursor over a point to show information related to that location. 
 
-Select the background map from menu in upper-left corner (ESRI bathymetric, or satellite image).
+Select the background map from menu in upper-right corner (bathymetric, or satellite image).
 
 Current data on sea ice concentration from the University of Bremen are available [here](https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png).
 
