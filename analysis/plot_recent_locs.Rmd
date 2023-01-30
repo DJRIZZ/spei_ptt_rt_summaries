@@ -51,6 +51,11 @@ alldata$tempC <- round(-28.682 + 0.3609 * alldata$argos.sensor.1, 1)
 # select locations from most recent 2 weeks
 recent <- subset(alldata, timestamp > today-14)
 
+# save locations
+filename <- paste('spei_ptt_two_weeks_', today, sep = "")
+filename <- paste(filename, ".csv", sep = "")
+write.csv(recent, paste('output/', filename, sep = ""))
+
 # remove locations marked as outliers based on movement rates and directions using Douglas Argos Filter, which is run in Movebank
 #table(locs_fws$algorithm.marked.outlier)
 locs_filter <- subset(recent, algorithm.marked.outlier != "true")
