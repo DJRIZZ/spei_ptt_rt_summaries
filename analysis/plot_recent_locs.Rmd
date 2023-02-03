@@ -13,9 +13,12 @@ library(leaflet) # interactive map
 library(tidyverse) # whatever
 library(move)   # must be move version 3.3.0+; to access Movebank data
 library(htmltools) # apply html syntax used in leaflet map
+library(raster) # working with ice geotif
+library(sp) # for re-projecting raster 
 
 # set current date
 today<-Sys.Date()
+yesterday <- Sys.Date()-1
 ```
 
 Locations were downloaded from the Movebank.org data repository on `r today`.
@@ -71,29 +74,74 @@ ptt_count <- length(ptts)
 location_count <-length(recent) 
 ```
 
+
+```{r data seaice, include=FALSE, warning = FALSE}
+# R code to download sea ice concentration data from the University of Bremen
+# data format = geotif, *.tif, at 6.25 km pixel size
+# Bremen sea ice concentration data: https://seaice.uni-bremen.de/databrowser/#p=sic
+# Set date for download 
+# Daily data are available today -1 day
+date <- format(yesterday, "%Y%m%d")
+Month <- format(yesterday, "%b")
+month <- tolower(Month)
+
+# Create Bremen URL: https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/jan/[REGION]/asi-AMSR2-n3125-[DATE]-v5.4.tif
+URL_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/" 
+URL_month <- paste(URL_start, month, sep="")
+URL_region <- paste(URL_month, "/Beringstrait/", sep = "")
+filename_start <- paste("asi-AMSR2-n3125-", date, sep = "")
+filename <- paste(filename_start, "-v5.4.tif", sep="")
+url <- paste(URL_region, filename, sep="")
+
+# Specify download destination 
+destfile <- paste("source/bremen_sic_tif/", filename, sep = "")
+
+# Download it
+download.file(url = url, destfile = destfile, method = 'curl')
+
+# Format it
+ice <- raster(paste('source/bremen_sic_tif/', filename, sep = ""))
+
+# Check CRS
+#crs.ice <- projection(ice)
+
+# reproject to lat lon WGS84
+raster::projectExtent(ice, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+#projection(ice)
+
+```
 The oldest transmitter location timestamp in this map is `r min_date`.
 
 The most recent transmitter location timestamp in this map is `r max_date`.
 
 `r location_count` locations from `r ptt_count` transmitters are shown in this plot.
 
+Sea ice concentration data from University of Bremen are from `r yesterday`.
+
 Hover the cursor over a point to show information related to that location. 
 
-Select the background map from menu in upper-right corner (bathymetric, or satellite image).
+Select the background map from menu in upper-right corner (sea ice concentration or satellite image).
 
-Current data on sea ice concentration from the University of Bremen are available [here](https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png).
+Data on sea ice concentration from the University of Bremen are available [here](https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png).
+
+Information on remotely sensed sea ice data is [here](https://seaice.uni-bremen.de/fileadmin/user_upload/ASIuserguide.pdf)
 
 ```{r leaflet map, warning = FALSE}
+# ice palette
+pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice), na.color = "#FFFFCC")
+
 # map 'em
 m <- leaflet() %>%
   setView(lng = -170, lat = 63.5, zoom = 6) %>%
-  addProviderTiles("Esri.OceanBasemap", group = "Ocean Basemap") %>%
   addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
-  addLayersControl( baseGroups = c("Ocean Basemap",
+  addRasterImage(ice, colors = pal, opacity = 0.8) %>% 
+  addLayersControl( baseGroups = c("Sea Ice Concentration",
                   "Satellite"),
     options = layersControlOptions(collapsed = FALSE),
     position = 'topright'
   ) %>% 
+  addLegend(pal = pal, values = values((ice/250)*100),
+    title = "% Sea Ice Concentration") %>% 
   addScaleBar(position = 'topright') %>%
   addMeasure(
     primaryLengthUnit = "kilometers",
