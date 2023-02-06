@@ -54,6 +54,8 @@ alldata$tempC <- round(-28.682 + 0.3609 * alldata$argos.sensor.1, 1)
 # select locations from most recent 2 weeks
 recent <- subset(alldata, timestamp > today-14)
 
+yesterday_locs <- subset(recent, timestamp > today-2)
+
 # save locations
 filename <- paste('spei_ptt_two_weeks_', today, sep = "")
 filename <- paste(filename, ".csv", sep = "")
@@ -114,13 +116,15 @@ The oldest transmitter location timestamp in this map is `r min_date`.
 
 The most recent transmitter location timestamp in this map is `r max_date`.
 
-`r location_count` locations from `r ptt_count` transmitters are shown in this plot.
+`r location_count` locations from `r ptt_count` transmitters are shown in this map
 
 Sea ice concentration data from University of Bremen are from `r yesterday`.
 
 Hover the cursor over a point to show information related to that location. 
 
 Select the background map from menu in upper-right corner (sea ice concentration or satellite image).
+
+Select the most recent 2 weeks of locations (red points) or most recent 2 days (1 duty cycle) of locations (yellow points) in the upper right corner.
 
 Data on sea ice concentration from the University of Bremen are available [here](https://seaice.uni-bremen.de/data/amsr2/today/Beringstrait_AMSR2_visual.png).
 
@@ -133,27 +137,21 @@ pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice), na.color =
 # map 'em
 m <- leaflet() %>%
   setView(lng = -170, lat = 63.5, zoom = 6) %>%
+  # add base layers
+  # Satellite Imagery
   addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
+  # Sea ice Concentration
   addRasterImage(ice, colors = pal, opacity = 0.8) %>% 
-  addLayersControl( baseGroups = c("Sea Ice Concentration",
-                  "Satellite"),
-    options = layersControlOptions(collapsed = FALSE),
-    position = 'topright'
-  ) %>% 
   addLegend(pal = pal, values = values((ice/250)*100),
     title = "% Sea Ice Concentration") %>% 
   addScaleBar(position = 'topright') %>%
-  addMeasure(
-    primaryLengthUnit = "kilometers",
-    secondaryLengthUnit = 'miles',
-    primaryAreaUnit = "sqmeters",
-    secondaryAreaUnit = "acres",
-    position = 'topleft'
-  ) %>%
-  addCircles(data = improb,
+  # add overlay groups
+  # most recent 2 weeks of data
+  addCircles(data = recent,
              ~ location.long,
              ~ location.lat,
              color = "red",
+             group ="TwoWeeks",
              label = paste("ID:", improb$individual.local.identifier, "<br>",
                            "Loc Date:", improb$timestamp, "<br>",
                            "Deploy Site:", improb$study_site, "<br>",
@@ -161,21 +159,36 @@ m <- leaflet() %>%
                            "Age:", ifelse(improb$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
                            "PTT temp (alive is ~ 40 C):", ifelse(locs_filter$argos.sensor.3 != 0, locs_filter$tempC, "NA"), "<br>",
                            "Location class", locs_filter$argos.lc) %>%           
-               lapply(htmltools::HTML)
-)%>%
-addCircles(data = locs_filter,
+               lapply(htmltools::HTML)) %>% 
+  # most recent 2 days of data (1 duty cycle)
+  addCircles(data = yesterday_locs,
              ~ location.long,
-            ~ location.lat,
-             color = "red",
-             label = paste("ID:", locs_filter$individual.local.identifier, "<br>",
-                           "Loc Date:", locs_filter$timestamp, "<br>",
-                           "Deploy Site:", locs_filter$study_site, "<br>",
-                           "Sex:", ifelse(locs_filter$animal_sex == "f", "Female", "Male"), "<br>",
-                           "Age:", ifelse(locs_filter$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
+             ~ location.lat,
+             color = "yellow",
+             group ="TwoDays",
+             label = paste("ID:", improb$individual.local.identifier, "<br>",
+                           "Loc Date:", improb$timestamp, "<br>",
+                           "Deploy Site:", improb$study_site, "<br>",
+                           "Sex:", ifelse(improb$animal_sex == "f", "Female", "Male"), "<br>",
+                           "Age:", ifelse(improb$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
                            "PTT temp (alive is ~ 40 C):", ifelse(locs_filter$argos.sensor.3 != 0, locs_filter$tempC, "NA"), "<br>",
-                           "Location class", locs_filter$argos.lc) %>%
-               lapply(htmltools::HTML)
- )
+                           "Location class", locs_filter$argos.lc) %>%           
+               lapply(htmltools::HTML))%>% 
+    # add layer controls
+  addLayersControl( 
+      baseGroups = c("Sea Ice Concentration","Satellite"),
+      overlayGroups = c("TwoWeeks", "TwoDays"),
+      options = layersControlOptions(collapsed = FALSE),
+      position = 'topright'
+    ) %>% 
+  # add measurement
+  addMeasure(
+    primaryLengthUnit = "kilometers",
+    secondaryLengthUnit = 'miles',
+    primaryAreaUnit = "sqmeters",
+    secondaryAreaUnit = "acres",
+    position = 'topleft'
+  )
 m
 
 ```
