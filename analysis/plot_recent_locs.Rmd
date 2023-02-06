@@ -52,28 +52,30 @@ alldata$tempC <- round(-28.682 + 0.3609 * alldata$argos.sensor.1, 1)
 #alldata$tempF <- (alldata$tempC * 1.8) + 32
 
 # select locations from most recent 2 weeks
-recent <- subset(alldata, timestamp > today-14)
+fourweeks <- subset(alldata, timestamp > today-28)
 
-yesterday_locs <- subset(recent, timestamp > today-2)
+twoweeks <- subset(fourweeks, timestamp > today-14)
+
+twodays <- subset(twoweeks, timestamp > today-2)
 
 # save locations
-filename <- paste('spei_ptt_two_weeks_', today, sep = "")
+filename <- paste('spei_ptt_four_weeks_', today, sep = "")
 filename <- paste(filename, ".csv", sep = "")
-write.csv(recent, paste('output/', filename, sep = ""))
+write.csv(fourweeks, paste('output/', filename, sep = ""))
 
 # remove locations marked as outliers based on movement rates and directions using Douglas Argos Filter, which is run in Movebank
 #table(locs_fws$algorithm.marked.outlier)
-locs_filter <- subset(recent, algorithm.marked.outlier != "true")
+locs_filter <- subset(fourweeks, algorithm.marked.outlier != "true")
 
 # create data frame of locations marked by DAF as likely outliers to plot along with filtered locations
-improb <- subset(recent, algorithm.marked.outlier == "true")
+improb <- subset(fourweeks, algorithm.marked.outlier == "true")
 
 # define range of data and sample size for locations and transmitters
-min_date <- min(recent$timestamp)
-max_date <- max(recent$timestamp)
-ptts <- unique(recent$tag_local_identifier)
+min_date <- min(fourweeks$timestamp)
+max_date <- max(fourweeks$timestamp)
+ptts <- unique(fourweeks$tag_local_identifier)
 ptt_count <- length(ptts)
-location_count <-length(recent) 
+location_count <-length(fourweeks) 
 ```
 
 
@@ -88,29 +90,45 @@ Month <- format(yesterday, "%b")
 month <- tolower(Month)
 
 # Create Bremen URL: https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/jan/[REGION]/asi-AMSR2-n3125-[DATE]-v5.4.tif
-URL_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/" 
-URL_month <- paste(URL_start, month, sep="")
-URL_region <- paste(URL_month, "/Beringstrait/", sep = "")
-filename_start <- paste("asi-AMSR2-n3125-", date, sep = "")
-filename <- paste(filename_start, "-v5.4.tif", sep="")
-url <- paste(URL_region, filename, sep="")
+# Arctic-wide raster
+#URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2023/" 
+#URL_artic_month <- paste(URL_arctic_start, month, sep="")
+#URL_arctic_region <- paste(URL_artic_month, "/Arctic/", sep = "")
+#filename_arctic_start <- paste("asi-AMSR2-n6250-", date, sep = "")
+#filename_arctic <- paste(filename_arctic_start, "-v5.4.tif", sep="")
+#url_arctic <- paste(URL_arctic_region, filename_arctic, sep="")
 
 # Specify download destination 
-destfile <- paste("source/bremen_sic_tif/", filename, sep = "")
+#destfile <- paste("source/bremen_sic_tif/", filename_arctic, sep = "")
 
 # Download it
-download.file(url = url, destfile = destfile, method = 'curl')
+#download.file(url = url_arctic, destfile = destfile, method = 'curl')
 
 # Format it
-ice <- raster(paste('source/bremen_sic_tif/', filename, sep = ""))
+#ice_arctic <- raster(paste('source/bremen_sic_tif/', filename_arctic, sep = ""))
 
 # Check CRS
 #crs.ice <- projection(ice)
 
 # reproject to lat lon WGS84
-raster::projectExtent(ice, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+#raster::projectExtent(ice_arctic, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 #projection(ice)
 
+# repeat for Bering Strait raster at smaller pixel size
+URL_bs_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/" 
+URL_bs_month <- paste(URL_bs_start, month, sep="")
+URL_bs_region <- paste(URL_bs_month, "/Beringstrait/", sep = "")
+filename_bs_start <- paste("asi-AMSR2-n3125-", date, sep = "")
+filename_bs <- paste(filename_bs_start, "-v5.4.tif", sep= "")
+url_bs <- paste(URL_bs_region, filename_bs, sep= "")
+destfile <- paste("source/bremen_sic_tif/", filename_bs, sep = "")
+download.file(url = url_bs, destfile = destfile, method = 'curl')
+ice_bs <- raster(paste('source/bremen_sic_tif/', filename_bs, sep = ""))
+raster::projectExtent(ice_bs, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+
+# merge Artic with BS rasters
+#ice <- raster::merge(ice_arctic, ice_bs)
+ice <- ice_bs
 ```
 The oldest transmitter location timestamp in this map is `r min_date`.
 
@@ -146,11 +164,25 @@ m <- leaflet() %>%
     title = "% Sea Ice Concentration") %>% 
   addScaleBar(position = 'topright') %>%
   # add overlay groups
-  # most recent 2 weeks of data
-  addCircles(data = recent,
+  # most recent 4 weeks of data
+  addCircles(data = fourweeks,
              ~ location.long,
              ~ location.lat,
              color = "red",
+             group ="FourWeeks",
+             label = paste("ID:", improb$individual.local.identifier, "<br>",
+                           "Loc Date:", improb$timestamp, "<br>",
+                           "Deploy Site:", improb$study_site, "<br>",
+                           "Sex:", ifelse(improb$animal_sex == "f", "Female", "Male"), "<br>",
+                           "Age:", ifelse(improb$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
+                           "PTT temp (alive is ~ 40 C):", ifelse(locs_filter$argos.sensor.3 != 0, locs_filter$tempC, "NA"), "<br>",
+                           "Location class", locs_filter$argos.lc) %>%           
+               lapply(htmltools::HTML)) %>% 
+  # most recent 2 weeks
+  addCircles(data = twoweeks,
+             ~ location.long,
+             ~ location.lat,
+             color = "orange",
              group ="TwoWeeks",
              label = paste("ID:", improb$individual.local.identifier, "<br>",
                            "Loc Date:", improb$timestamp, "<br>",
@@ -161,7 +193,7 @@ m <- leaflet() %>%
                            "Location class", locs_filter$argos.lc) %>%           
                lapply(htmltools::HTML)) %>% 
   # most recent 2 days of data (1 duty cycle)
-  addCircles(data = yesterday_locs,
+  addCircles(data = twodays,
              ~ location.long,
              ~ location.lat,
              color = "yellow",
@@ -177,7 +209,7 @@ m <- leaflet() %>%
     # add layer controls
   addLayersControl( 
       baseGroups = c("Sea Ice Concentration","Satellite"),
-      overlayGroups = c("TwoWeeks", "TwoDays"),
+      overlayGroups = c("FourWeeks", "TwoWeeks", "TwoDays"),
       options = layersControlOptions(collapsed = FALSE),
       position = 'topright'
     ) %>% 
