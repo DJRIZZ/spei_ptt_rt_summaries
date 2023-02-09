@@ -1,5 +1,5 @@
 ---
-title: "Map"
+title: "Recent SPEI Transmitter Locations"
 author: 
 date: "`r Sys.Date()`"
 output: workflowr::wflow_html
@@ -156,12 +156,12 @@ pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice), na.color =
 m <- leaflet() %>%
   setView(lng = -170, lat = 63.5, zoom = 6) %>%
   # add base layers
-  # Satellite Imagery
-  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
   # Sea ice Concentration
   addRasterImage(ice, colors = pal, opacity = 0.8) %>% 
   addLegend(pal = pal, values = values((ice/250)*100),
     title = "% Sea Ice Concentration") %>% 
+  # Satellite Imagery
+  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
   addScaleBar(position = 'topright') %>%
   # add overlay groups
   # most recent 4 weeks of data
@@ -208,7 +208,7 @@ m <- leaflet() %>%
                lapply(htmltools::HTML))%>% 
     # add layer controls
   addLayersControl( 
-      baseGroups = c("Sea Ice Concentration","Satellite"),
+      baseGroups = c("Satellite", "Sea Ice Concentration"),
       overlayGroups = c("FourWeeks", "TwoWeeks", "TwoDays"),
       options = layersControlOptions(collapsed = FALSE),
       position = 'topright'
