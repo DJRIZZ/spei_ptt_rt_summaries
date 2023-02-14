@@ -90,31 +90,31 @@ Month <- format(yesterday, "%b")
 month <- tolower(Month)
 
 # Create Bremen URL: https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/jan/[REGION]/asi-AMSR2-n3125-[DATE]-v5.4.tif
-# Arctic-wide raster
-#URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2023/" 
-#URL_artic_month <- paste(URL_arctic_start, month, sep="")
-#URL_arctic_region <- paste(URL_artic_month, "/Arctic/", sep = "")
-#filename_arctic_start <- paste("asi-AMSR2-n6250-", date, sep = "")
-#filename_arctic <- paste(filename_arctic_start, "-v5.4.tif", sep="")
-#url_arctic <- paste(URL_arctic_region, filename_arctic, sep="")
+# Arctic-wide raster with 6.25 km pixel size
+URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2023/" 
+URL_artic_month <- paste(URL_arctic_start, month, sep="")
+URL_arctic_region <- paste(URL_artic_month, "/Arctic/", sep = "")
+filename_arctic_start <- paste("asi-AMSR2-n6250-", date, sep = "")
+filename_arctic <- paste(filename_arctic_start, "-v5.4.tif", sep="")
+url_arctic <- paste(URL_arctic_region, filename_arctic, sep="")
 
 # Specify download destination 
-#destfile <- paste("source/bremen_sic_tif/", filename_arctic, sep = "")
+destfile <- paste("source/bremen_sic_tif/", filename_arctic, sep = "")
 
 # Download it
-#download.file(url = url_arctic, destfile = destfile, method = 'curl')
+download.file(url = url_arctic, destfile = destfile, method = 'curl')
 
 # Format it
-#ice_arctic <- raster(paste('source/bremen_sic_tif/', filename_arctic, sep = ""))
+ice_arctic <- raster(paste('source/bremen_sic_tif/', filename_arctic, sep = ""))
 
 # Check CRS
-#crs.ice <- projection(ice)
+#crs.ice_arctic <- projection(ice_arctic)
 
 # reproject to lat lon WGS84
-#raster::projectExtent(ice_arctic, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
-#projection(ice)
+raster::projectExtent(ice_arctic, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+#projection(ice_arctic)
 
-# repeat for Bering Strait raster at smaller pixel size
+# repeat for Bering Strait raster at smaller pixel size, 3.125 km
 URL_bs_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/" 
 URL_bs_month <- paste(URL_bs_start, month, sep="")
 URL_bs_region <- paste(URL_bs_month, "/Beringstrait/", sep = "")
@@ -126,9 +126,12 @@ download.file(url = url_bs, destfile = destfile, method = 'curl')
 ice_bs <- raster(paste('source/bremen_sic_tif/', filename_bs, sep = ""))
 raster::projectExtent(ice_bs, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 
+# Check CRS
+#crs.ice_bs <- projection(ice_bs)
+
 # merge Artic with BS rasters
 #ice <- raster::merge(ice_arctic, ice_bs)
-ice <- ice_bs
+#ice <- ice_bs
 ```
 The oldest transmitter location timestamp in this map is `r min_date`.
 
@@ -137,10 +140,12 @@ The most recent transmitter location timestamp in this map is `r max_date`.
 `r location_count` locations from `r ptt_count` transmitters are shown in this map
 
 Sea ice concentration data from University of Bremen are from `r yesterday`.
+Arctic sea ice concentration pixel size is 6.25 km.
+Bering sea ice concentration pixe size is 3.12 km.
 
 Hover the cursor over a point to show information related to that location. 
 
-Select the background map from menu in upper-right corner (sea ice concentration or satellite image).
+Select the background map from menu in upper-right corner (sea ice concentration in the Arctic at 6.25 km resolution, sea ice concentration in the Bering Strait at 3.12 km resolution, or satellite image).
 
 Select the most recent 2 weeks of locations (red points) or most recent 2 days (1 duty cycle) of locations (yellow points) in the upper right corner.
 
@@ -150,16 +155,18 @@ Information on remotely sensed sea ice data is [here](https://seaice.uni-bremen.
 
 ```{r leaflet map, warning = FALSE}
 # ice palette
-pal <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice), na.color = "#FFFFCC")
+pal_arctic <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice_arctic), na.color = "#FFFFCC")
+pal_bs <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice_bs), na.color = "#FFFFCC")
 
 # map 'em
 m <- leaflet() %>%
-  setView(lng = -170, lat = 63.5, zoom = 6) %>%
+  setView(lng = -170, lat = 63.5, zoom = 6) %>% 
   # add base layers
   # Sea ice Concentration
-  addRasterImage(ice, colors = pal, opacity = 0.8) %>% 
-  addLegend(pal = pal, values = values((ice/250)*100),
-    title = "% Sea Ice Concentration") %>% 
+  addRasterImage(ice_arctic, colors = pal_arctic, opacity = 0.8, group = "Arctic_sea_ice") %>% 
+  addRasterImage(ice_bs, colors = pal_bs, opacity = 0.8, group = "Bering_sea_ice") %>% 
+#  addLegend(pal = pal_arctic, values = values((ice_bs/250)*100),
+#    title = "% Sea Ice Concentration") %>% 
   # Satellite Imagery
   addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
   addScaleBar(position = 'topright') %>%
@@ -208,7 +215,8 @@ m <- leaflet() %>%
                lapply(htmltools::HTML))%>% 
     # add layer controls
   addLayersControl( 
-      baseGroups = c("Satellite", "Sea Ice Concentration"),
+     baseGroups = c("Satellite", "Arctic_sea_ice", "Bering_sea_ice"),
+#      baseGroups = c("Satellite", "Sea Ice: Arctic 6.25 km pixel"),
       overlayGroups = c("FourWeeks", "TwoWeeks", "TwoDays"),
       options = layersControlOptions(collapsed = FALSE),
       position = 'topright'
