@@ -85,7 +85,7 @@ improb <- subset(fourweeks, algorithm.marked.outlier == "true")
 # define range of data and sample size for locations and transmitters
 min_date <- min(fourweeks$timestamp)
 max_date <- max(fourweeks$timestamp)
-ptts <- unique(fourweeks$tag_local_identifier)
+ptts <- unique(fourweeks$tag.local.identifier)
 ptt_count <- length(ptts)
 location_count <-length(fourweeks) 
 ```
