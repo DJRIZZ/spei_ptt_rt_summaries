@@ -45,8 +45,16 @@ ref_fws <- getMovebankReferenceTable(study=FwsName,login=Login)
 Data were not filtered before plotting. All locations received during each duty cycle were included. Two weeks of data prior to the date the data were downloaded are shown.
 ```{r data filtering, warning = FALSE}
 # combine locations and reference data for filtered locations
-alldata <- dplyr::left_join(locs_fws, ref_fws,
-                                 by=c("deployment.id" = "deployment_id", "sensor.type.id" = "sensor_type_id"))
+#alldata <- dplyr::left_join(locs_fws, ref_fws,
+#                                 by=c("deployment.id" = "deployment_id",
+#                                      "sensor.type.id" = "sensor_type_id"))
+#alldata <- dplyr::left_join(locs_fws, ref_fws,
+#                                 by=c("tag.local.identifier" = "tag_local_identifier"))
+
+# get tag id to match between ref and locs data frames for merge
+names(ref_fws)[names(ref_fws) == "tag_local_identifier"] <- "tag.local.identifier"
+# merge all locs to matching ref by tag id
+alldata <- merge(locs_fws, ref_fws, by = "tag.local.identifier", all.x = TRUE)
 # convert sensor 1 PTT temp from untransformed value to degrees F (PTT temps will be displayed in map)
 alldata$tempC <- round(-28.682 + 0.3609 * alldata$argos.sensor.1, 1)
 #alldata$tempF <- (alldata$tempC * 1.8) + 32
@@ -177,13 +185,13 @@ m <- leaflet() %>%
              ~ location.lat,
              color = "red",
              group ="FourWeeks",
-             label = paste("ID:", improb$individual.local.identifier, "<br>",
-                           "Loc Date:", improb$timestamp, "<br>",
-                           "Deploy Site:", improb$study_site, "<br>",
-                           "Sex:", ifelse(improb$animal_sex == "f", "Female", "Male"), "<br>",
-                           "Age:", ifelse(improb$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
-                           "PTT temp (alive is ~ 40 C):", ifelse(locs_filter$argos.sensor.3 != 0, locs_filter$tempC, "NA"), "<br>",
-                           "Location class", locs_filter$argos.lc) %>%           
+             label = paste("ID:", fourweeks$individual.local.identifier, "<br>",
+                           "Loc Date:", fourweeks$timestamp, "<br>",
+                           "Deploy Site:", fourweeks$study_site, "<br>",
+                           "Sex:", ifelse(fourweeks$animal_sex == "f", "Female", "Male"), "<br>",
+                           "Age:", ifelse(fourweeks$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
+                           "PTT temp (alive is ~ 40 C):", ifelse(fourweeks$argos.sensor.3 != 0, fourweeks$tempC, "NA"), "<br>",
+                           "Location class", fourweeks$argos.lc) %>%           
                lapply(htmltools::HTML)) %>% 
   # most recent 2 weeks
   addCircles(data = twoweeks,
@@ -191,13 +199,13 @@ m <- leaflet() %>%
              ~ location.lat,
              color = "orange",
              group ="TwoWeeks",
-             label = paste("ID:", improb$individual.local.identifier, "<br>",
-                           "Loc Date:", improb$timestamp, "<br>",
-                           "Deploy Site:", improb$study_site, "<br>",
-                           "Sex:", ifelse(improb$animal_sex == "f", "Female", "Male"), "<br>",
-                           "Age:", ifelse(improb$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
-                           "PTT temp (alive is ~ 40 C):", ifelse(locs_filter$argos.sensor.3 != 0, locs_filter$tempC, "NA"), "<br>",
-                           "Location class", locs_filter$argos.lc) %>%           
+             label = paste("ID:", twoweeks$individual.local.identifier, "<br>",
+                           "Loc Date:", twoweeks$timestamp, "<br>",
+                           "Deploy Site:", twoweeks$study_site, "<br>",
+                           "Sex:", ifelse(twoweeks$animal_sex == "f", "Female", "Male"), "<br>",
+                           "Age:", ifelse(twoweeks$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
+                           "PTT temp (alive is ~ 40 C):", ifelse(twoweeks$argos.sensor.3 != 0, twoweeks$tempC, "NA"), "<br>",
+                           "Location class", twoweeks$argos.lc) %>%           
                lapply(htmltools::HTML)) %>% 
   # most recent 2 days of data (1 duty cycle)
   addCircles(data = twodays,
@@ -205,13 +213,13 @@ m <- leaflet() %>%
              ~ location.lat,
              color = "yellow",
              group ="TwoDays",
-             label = paste("ID:", improb$individual.local.identifier, "<br>",
-                           "Loc Date:", improb$timestamp, "<br>",
-                           "Deploy Site:", improb$study_site, "<br>",
-                           "Sex:", ifelse(improb$animal_sex == "f", "Female", "Male"), "<br>",
-                           "Age:", ifelse(improb$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
-                           "PTT temp (alive is ~ 40 C):", ifelse(locs_filter$argos.sensor.3 != 0, locs_filter$tempC, "NA"), "<br>",
-                           "Location class", locs_filter$argos.lc) %>%           
+             label = paste("ID:", twodays$individual.local.identifier, "<br>",
+                           "Loc Date:", twodays$timestamp, "<br>",
+                           "Deploy Site:", twodays$study_site, "<br>",
+                           "Sex:", ifelse(twodays$animal_sex == "f", "Female", "Male"), "<br>",
+                           "Age:", ifelse(twodays$tag.local.identifier > 198000, "Juv", "Adult"), "<br>",
+                           "PTT temp (alive is ~ 40 C):", ifelse(twodays$argos.sensor.3 != 0, twodays$tempC, "NA"), "<br>",
+                           "Location class", twodays$argos.lc) %>%           
                lapply(htmltools::HTML))%>% 
     # add layer controls
   addLayersControl( 
