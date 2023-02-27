@@ -59,8 +59,12 @@ alldata <- merge(locs_fws, ref_fws, by = "tag.local.identifier", all.x = TRUE)
 alldata$tempC <- round(-28.682 + 0.3609 * alldata$argos.sensor.1, 1)
 #alldata$tempF <- (alldata$tempC * 1.8) + 32
 
+# remove location classes with no measurement of precision
+keep <- c("3", "2", "1", "0")
+locs_lc <- alldata[alldata$argos.lc %in% keep,]
+
 # select locations from most recent 2 weeks
-fourweeks <- subset(alldata, timestamp > today-28)
+fourweeks <- subset(locs_lc, timestamp > today-28)
 
 twoweeks <- subset(fourweeks, timestamp > today-14)
 
