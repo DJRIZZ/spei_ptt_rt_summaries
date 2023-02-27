@@ -560,15 +560,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree8ef1ce20f337030c371c8470b7e9206e34bd3d9atargetblank8ef1ce2a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestreee2cafbb5da71581f7d5f61795fec57fe683e0660targetblanke2cafbba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/8ef1ce20f337030c371c8470b7e9206e34bd3d9a" target="_blank">8ef1ce2</a>
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/e2cafbb5da71581f7d5f61795fec57fe683e0660" target="_blank">e2cafbb</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree8ef1ce20f337030c371c8470b7e9206e34bd3d9atargetblank8ef1ce2a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestreee2cafbb5da71581f7d5f61795fec57fe683e0660targetblanke2cafbba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -578,7 +578,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/8ef1ce20f337030c371c8470b7e9206e34bd3d9a" target="_blank">8ef1ce2</a>.
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/e2cafbb5da71581f7d5f61795fec57fe683e0660" target="_blank">e2cafbb</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -664,6 +664,41 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/blob/e2cafbb5da71581f7d5f61795fec57fe683e0660/analysis/plot_recent_locs.Rmd" target="_blank">e2cafbb</a>
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2023-02-26
+</td>
+<td>
+update 26 Feb 2023, filtered locs to known lc, corrected error in how
+points on map were labeled, labels were being taken from old data
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DJRIZZ/spei_ptt_rt_summaries/5f66b940835c29fd6dd2f9d623dfe29c8556f45f/docs/plot_recent_locs.html" target="_blank">5f66b94</a>
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2023-02-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1298,14 +1333,14 @@ improb &lt;- subset(fourweeks, algorithm.marked.outlier == &quot;true&quot;)
 # define range of data and sample size for locations and transmitters
 min_date &lt;- min(fourweeks$timestamp)
 max_date &lt;- max(fourweeks$timestamp)
-ptts &lt;- unique(fourweeks$tag_local_identifier)
+ptts &lt;- unique(fourweeks$tag.local.identifier)
 ptt_count &lt;- length(ptts)
 location_count &lt;-length(fourweeks) </code></pre>
 <p>The oldest transmitter location timestamp in this map is 2023-01-29
 00:09:14.</p>
 <p>The most recent transmitter location timestamp in this map is
 2023-02-27 06:12:47.</p>
-<p>82 locations from 0 transmitters are shown in this map</p>
+<p>82 locations from 30 transmitters are shown in this map</p>
 <p>Sea ice concentration data from University of Bremen are from
 2023-02-25. Arctic sea ice concentration pixel size is 6.25 km. Bering
 sea ice concentration pixe size is 3.12 km.</p>
