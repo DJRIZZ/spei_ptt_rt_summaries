@@ -132,18 +132,18 @@ id_ptt <- c(id_ptt_ad, id_ptt_juv)
 # from tbl_fates in database spei_ptt_2018_2022.accdb
 status <- c("active", #197559
             "active", #197560
-            "active", #197561
+            "ambiguous", #197561 * last loc 05 Feb 2023
             "active", #197562
             "cold", #197563
             "active", #197564
-            "active", #197565
+            "ambiguous", #197565 **last loc 01 Feb 2023
             "active", #197566
             "active", #197567
             "active",#197568
-           "ambiguous", #197569
+           "ambiguous", #197569 
            "active",#197570
            "ambiguous",#197571
-           "active",#197572
+           "ambiguous",#197572  ** last loc 05 Feb 2023
            "ambiguous",#197573
            "active",#197574
            "active", #197575
@@ -168,7 +168,7 @@ status <- c("active", #197559
            "active", #197594
            "active", #197595
            "active", #197596
-           "active", #197597
+           "ambiguous", #197597 * last loc 16 Feb 2023
            "active", #197598
            "ambiguous", #229950
            "ambiguous", #229951
@@ -177,7 +177,7 @@ status <- c("active", #197559
            "cold",#229954
            "active", #229955
            "cold", #229957
-           "active",#229958
+           "ambiguous",#229958 * last loc 28 Jan 2023
            "active", #229961
            "cold", #229963
            "cold", #229964
