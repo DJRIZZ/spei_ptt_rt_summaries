@@ -106,7 +106,7 @@ location_count2d <-length(twodays)
 ```
 
 
-```{r data seaice, include=FALSE, warning = FALSE}
+```{r data seaice, warning = FALSE}
 # R code to download sea ice concentration data from the University of Bremen
 # data format = geotif, *.tif, at 6.25 km pixel size
 # Bremen sea ice concentration data: https://seaice.uni-bremen.de/databrowser/#p=sic
