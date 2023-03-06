@@ -18,6 +18,7 @@ library(move) # to access data in Movebank
 
 # set current date
 today<-Sys.Date()
+yesterday <- as.POSIXct(today-1)
 ```
 
 Data transmitted by each active satellite transmitter includes the temperature of the transmitter (sensor 1 data). Transmitter temperature is the body temperature of the eider and should be ~ 40 °C. Transmitters in dead birds will be ambient temperature. 
@@ -92,6 +93,7 @@ for(var in unique(active$tag.local.identifier)){
           geom_line()+
           ylim(min(active$btemp), max(active$btemp))+
           scale_x_datetime(limits = c(min(active$timestamp), max(active$timestamp)))+
+          geom_vline(xintercept = yesterday, color = "blue", linetype = 4) +
           ggtitle(label = var)
   )
 }
