@@ -466,15 +466,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree72adcf288f7f2e199dd5553290b6225898ef5932targetblank72adcf2a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree0898d71485db738e55773b2ff75f34ff9b56cae6targetblank0898d71a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/72adcf288f7f2e199dd5553290b6225898ef5932" target="_blank">72adcf2</a>
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/0898d71485db738e55773b2ff75f34ff9b56cae6" target="_blank">0898d71</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree72adcf288f7f2e199dd5553290b6225898ef5932targetblank72adcf2a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDJRIZZspeipttrtsummariestree0898d71485db738e55773b2ff75f34ff9b56cae6targetblank0898d71a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -484,7 +484,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/72adcf288f7f2e199dd5553290b6225898ef5932" target="_blank">72adcf2</a>.
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/tree/0898d71485db738e55773b2ff75f34ff9b56cae6" target="_blank">0898d71</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -575,6 +575,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DJRIZZ/spei_ptt_rt_summaries/blob/0898d71485db738e55773b2ff75f34ff9b56cae6/analysis/plot_ptt_temp_all.Rmd" target="_blank">0898d71</a>
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2023-03-06
+</td>
+<td>
+update 06 March 2023, added vline for yesterday
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DJRIZZ/spei_ptt_rt_summaries/7cfdace7328d71fa6af59ceb468e09762b2397a9/docs/plot_ptt_temp_all.html" target="_blank">7cfdace</a>
+</td>
+<td>
+DJRIZZ
+</td>
+<td>
+2023-03-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1004,6 +1038,7 @@ of mortality.</p>
           geom_line()+
           ylim(min(active$btemp), max(active$btemp))+
           scale_x_datetime(limits = c(min(active$timestamp), max(active$timestamp)))+
+          geom_vline(xintercept = yesterday, color = &quot;blue&quot;, linetype = 4) +
           ggtitle(label = var)
   )
 }</code></pre>
