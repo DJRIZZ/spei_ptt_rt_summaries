@@ -15,6 +15,7 @@ library(move)   # must be move version 3.3.0+; to access Movebank data
 library(htmltools) # apply html syntax used in leaflet map
 library(raster) # working with ice geotif
 library(sp) # for re-projecting raster 
+library(sf) # reading in KML of survey area
 
 # set current date
 today<-Sys.Date()
@@ -255,6 +256,14 @@ m <- leaflet() %>%
     primaryAreaUnit = "sqmeters",
     secondaryAreaUnit = "acres",
     position = 'topleft'
+  )
+
+# add survey area
+survey <- st_read("data/gis/optional.polygon.kml")
+
+m <- m %>% 
+  addPolygons(
+    data = survey
   )
 m
 
