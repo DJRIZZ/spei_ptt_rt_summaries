@@ -107,7 +107,7 @@ location_count2d <-length(twodays)
 ```
 
 
-```{r data seaice, warning = FALSE}
+```{r data seaice, warning = FALSE, , include=FALSE}
 # R code to download sea ice concentration data from the University of Bremen
 # data format = geotif, *.tif, at 6.25 km pixel size
 # Bremen sea ice concentration data: https://seaice.uni-bremen.de/databrowser/#p=sic
@@ -160,6 +160,9 @@ raster::projectExtent(ice_bs, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=W
 # merge Artic with BS rasters
 #ice <- raster::merge(ice_arctic, ice_bs)
 #ice <- ice_bs
+
+# add survey area
+survey <- st_read("data/gis/optional.polygon.kml")
 ```
 The oldest transmitter location timestamp in this map is `r min_date`.
 
@@ -257,9 +260,6 @@ m <- leaflet() %>%
     secondaryAreaUnit = "acres",
     position = 'topleft'
   )
-
-# add survey area
-survey <- st_read("data/gis/optional.polygon.kml")
 
 m <- m %>% 
   addPolygons(
