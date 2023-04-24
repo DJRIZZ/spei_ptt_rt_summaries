@@ -169,7 +169,7 @@ status <- c("active", #197559
            "active", #197595
            "active", #197596
            "ambiguous", #197597 * last loc 16 Feb 2023
-           "active", #197598
+           "ambiguous", #197598
            "ambiguous", #229950
            "ambiguous", #229951
            "cold", #229952
