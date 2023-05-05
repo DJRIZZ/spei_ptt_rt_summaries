@@ -170,18 +170,18 @@ status <- c("active", #197559
            "active", #197596
            "ambiguous", #197597 * last loc 16 Feb 2023
            "ambiguous", #197598
-           "ambiguous", #229950
-           "ambiguous", #229951
-           "cold", #229952
-           "cold",#229953
-           "cold",#229954
+           "ambiguous", #229950 * last loc 12 AUg 2022
+           "ambiguous", #229951 * lat loc 12 Sept 2022
+           "cold", #229952 * First cold 27 Oct 2022
+           "cold",#229953 * First cold 12 Dec 2022
+           "cold",#229954 * First cold 04 Sept 2022
            "active", #229955
-           "cold", #229957
+           "cold", #229957 * First cold 22 Sept 2022
            "ambiguous",#229958 * last loc 28 Jan 2023
            "active", #229961
-           "cold", #229963
-           "cold", #229964
-           "cold") #229965
+           "cold", #229963 * First cold 31 Aug 2022
+           "cold", #229964 * First cold 06 Sept 2022
+           "cold") #229965 * First cold 15 Sept 2022
 
 fates_df <- data.frame(id_ptt, status)
 
