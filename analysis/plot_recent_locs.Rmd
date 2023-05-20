@@ -191,7 +191,7 @@ pal_bs <- colorNumeric(c("#0C2C84", "#41B6C4", "#FFFFCC"), values (ice_bs), na.c
 
 # map 'em
 m <- leaflet() %>%
-  setView(lng = -170, lat = 63.5, zoom = 6) %>% 
+  setView(lng = -170, lat = 63.5, zoom = 4) %>% 
   # add base layers
   # Sea ice Concentration
   addRasterImage(ice_arctic, colors = pal_arctic, opacity = 0.8, group = "Arctic_sea_ice") %>% 
@@ -261,10 +261,10 @@ m <- leaflet() %>%
     position = 'topleft'
   )
 
-m <- m %>% 
-  addPolygons(
-    data = survey
-  )
+#m <- m %>% 
+#  addPolygons(
+#    data = survey
+#  )
 m
 
 ```
