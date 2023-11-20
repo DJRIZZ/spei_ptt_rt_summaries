@@ -8,6 +8,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
+# NB Curl not downloading geotifs correctly as of 20231120, commented out download code with ###*** and saved files from web manually for now
 # got packages?
 library(leaflet) # interactive map
 library(tidyverse) # whatever
@@ -130,7 +131,7 @@ url_arctic <- paste(URL_arctic_region, filename_arctic, sep="")
 destfile <- paste("source/bremen_sic_tif/", filename_arctic, sep = "")
 
 # Download it
-download.file(url = url_arctic, destfile = destfile, method = 'curl')
+###***download.file(url = url_arctic, destfile = destfile, method = 'curl')
 
 # Format it
 ice_arctic <- raster(paste('source/bremen_sic_tif/', filename_arctic, sep = ""))
@@ -150,7 +151,7 @@ filename_bs_start <- paste("asi-AMSR2-n3125-", date, sep = "")
 filename_bs <- paste(filename_bs_start, "-v5.4.tif", sep= "")
 url_bs <- paste(URL_bs_region, filename_bs, sep= "")
 destfile <- paste("source/bremen_sic_tif/", filename_bs, sep = "")
-download.file(url = url_bs, destfile = destfile, method = 'curl')
+###***download.file(url = url_bs, destfile = destfile, method = 'curl')
 ice_bs <- raster(paste('source/bremen_sic_tif/', filename_bs, sep = ""))
 raster::projectExtent(ice_bs, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 
