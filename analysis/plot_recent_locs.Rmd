@@ -8,6 +8,8 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
+#NB as of 2024 the download.file util in base R is not working correctly. The TIF files from Bermen are corrupted on download. When I download the files manually via a web browser they are fine. Need to trouble shoot.
+
 # NB Curl not downloading geotifs correctly as of 20231120, commented out download code with ###*** and saved files from web manually for now
 # got packages?
 library(leaflet) # interactive map
@@ -120,7 +122,7 @@ month <- tolower(Month)
 
 # Create Bremen URL: https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/jan/[REGION]/asi-AMSR2-n3125-[DATE]-v5.4.tif
 # Arctic-wide raster with 6.25 km pixel size
-URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2023/" 
+URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2024/" 
 URL_artic_month <- paste(URL_arctic_start, month, sep="")
 URL_arctic_region <- paste(URL_artic_month, "/Arctic/", sep = "")
 filename_arctic_start <- paste("asi-AMSR2-n6250-", date, sep = "")
@@ -131,7 +133,8 @@ url_arctic <- paste(URL_arctic_region, filename_arctic, sep="")
 destfile <- paste("source/bremen_sic_tif/", filename_arctic, sep = "")
 
 # Download it
-###***download.file(url = url_arctic, destfile = destfile, method = 'curl')
+###***
+#****download.file(url = url_arctic, destfile = destfile, method = 'curl')
 
 # Format it
 ice_arctic <- raster(paste('source/bremen_sic_tif/', filename_arctic, sep = ""))
@@ -144,14 +147,15 @@ raster::projectExtent(ice_arctic, crs = sp::CRS("+proj=longlat +ellps=WGS84 +dat
 #projection(ice_arctic)
 
 # repeat for Bering Strait raster at smaller pixel size, 3.125 km
-URL_bs_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2023/" 
+URL_bs_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2024/" 
 URL_bs_month <- paste(URL_bs_start, month, sep="")
 URL_bs_region <- paste(URL_bs_month, "/Beringstrait/", sep = "")
 filename_bs_start <- paste("asi-AMSR2-n3125-", date, sep = "")
 filename_bs <- paste(filename_bs_start, "-v5.4.tif", sep= "")
 url_bs <- paste(URL_bs_region, filename_bs, sep= "")
 destfile <- paste("source/bremen_sic_tif/", filename_bs, sep = "")
-###***download.file(url = url_bs, destfile = destfile, method = 'curl')
+###***
+#****download.file(url = url_bs, destfile = destfile, method = 'curl')
 ice_bs <- raster(paste('source/bremen_sic_tif/', filename_bs, sep = ""))
 raster::projectExtent(ice_bs, crs = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 
