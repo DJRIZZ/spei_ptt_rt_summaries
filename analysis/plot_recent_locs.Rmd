@@ -67,6 +67,10 @@ alldata$tempC <- round(-28.682 + 0.3609 * alldata$argos.sensor.1, 1)
 keep <- c("3", "2", "1", "0")
 locs_lc <- alldata[alldata$argos.lc %in% keep,]
 
+##### filter locations from transmitters colder than 25 C ####
+locs_lc$tempKeep <- ifelse(locs_lc$tempC < 25, 0, 1)
+locs_lc <- subset(locs_lc, tempKeep == 1)
+
 # select locations from most recent 2 weeks
 fourweeks <- subset(locs_lc, timestamp > today-28)
 
