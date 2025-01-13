@@ -126,7 +126,7 @@ month <- tolower(Month)
 
 # Create Bremen URL: https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2024/jan/[REGION]/asi-AMSR2-n3125-[DATE]-v5.4.tif
 # Arctic-wide raster with 6.25 km pixel size
-URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2024/"
+URL_arctic_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n6250/2025/"
 URL_artic_month <- paste(URL_arctic_start, month, sep="")
 URL_arctic_region <- paste(URL_artic_month, "/Arctic/", sep = "")
 filename_arctic_start <- paste("asi-AMSR2-n6250-", date, sep = "")
@@ -148,7 +148,7 @@ raster::projectExtent(ice_arctic, crs = sp::CRS("+proj=longlat +ellps=WGS84 +dat
 #projection(ice_arctic)
 
 # repeat for Bering Strait raster at smaller pixel size, 3.125 km
-URL_bs_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2024/"
+URL_bs_start <- "https://seaice.uni-bremen.de/data/amsr2/asi_daygrid_swath/n3125/2025/"
 URL_bs_month <- paste(URL_bs_start, month, sep="")
 URL_bs_region <- paste(URL_bs_month, "/Beringstrait/", sep = "")
 filename_bs_start <- paste("asi-AMSR2-n3125-", date, sep = "")
